@@ -5,10 +5,12 @@
  */
 package entities;
 
+import java.io.Serializable;
+
 /**
  *
  * @author alexa
  */
-public class User {
+public class User implements Serializable {
     
 }
