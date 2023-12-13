@@ -77,6 +77,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "entities.Album[ id=" + id + " ]";
+        return "entities.User[ id=" + id + " ]";
     }
 }

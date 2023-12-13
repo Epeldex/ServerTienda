@@ -39,5 +39,8 @@ public class Admin extends User {
         return true;
     }
 
-    
+    @Override
+    public String toString() {
+        return "entities.Admin[ id=" + id + " ]";
+    }
 }
