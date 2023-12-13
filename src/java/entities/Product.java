@@ -1,108 +1,322 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package entities;
 
+import java.io.Serializable;
 import java.sql.Date;
+import java.util.Set;
+import static javax.persistence.CascadeType.ALL;
+import javax.persistence.Entity;
+import static javax.persistence.FetchType.EAGER;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import static javax.persistence.GenerationType.AUTO;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * Represents a product entity with various attributes such as product ID,
+ * product number, brand, model, weight, description, price, and creation
+ * timestamp. Implements hashCode, equals, and toString methods for object
+ * comparison and representation.
  *
- * @author alexa
+ * @author Alexander Epelde
  */
-public class Product {
+@Entity
+@Table(name = "product", schema = "our_shop")
+@XmlRootElement
+
+@NamedQueries({
+    @NamedQuery(name = "updateProduct",
+            query = "UPDATE Product p SET  p.brand = :brand, p.model = :model, p.otherInfo = :otherInfo, p.weight = :weight, p.description = :description, p.price = :price WHERE p.product_id = :productId")
+    ,
+   @NamedQuery(name = "deleteProduct",
+            query = "DELETE FROM Product p WHERE p.product_id = :productId")
+    ,
+   @NamedQuery(name = "selectAllProducts",
+            query = "SELECT p FROM Product ORDER BY p.product_id ASC")
+    ,
+    @NamedQuery(name = "selectProductById",
+            query = "SELECT p FROM Product WHERE p.product_id = :product_id")})
+
+public class Product implements Serializable {
+
+    /**
+     * Unique identifier for the product.
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer product_id;
+
+    /**
+     * Unique product number associated with the product.
+     */
+    @NotNull
     private String productNumber;
+
+    /**
+     * Brand of the product.
+     */
     private String brand;
+
+    /**
+     * Model of the product.
+     */
     private String model;
+
+    /**
+     * Additional information about the product.
+     */
     private String otherInfo;
+
+    /**
+     * Weight of the product.
+     */
     private Float weight;
+
+    /**
+     * Description of the product.
+     */
     private String description;
+
+    /**
+     * Price of the product.
+     */
     private Double price;
+
+    @MapsId("supplier_id")
+    @ManyToOne
+    private Supplier supplier;
+
+    @MapsId("tag_id")
+    @ManyToOne
+    private Tag tag;
+
+    @OneToMany(fetch = EAGER, cascade = ALL, mappedBy = "product")
+    private Set<ProductsBought> productsBought;
+    /**
+     * Timestamp indicating when the product was created.
+     */
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createTimestamp;
 
-    
+    /**
+     * Gets the product ID.
+     *
+     * @return the product ID
+     */
     public Integer getProduct_id() {
         return product_id;
     }
+
+    /**
+     * Sets the product ID.
+     *
+     * @param product_id the product ID to set
+     */
     public void setProduct_id(Integer product_id) {
         this.product_id = product_id;
     }
+
+    /**
+     * Gets the product number.
+     *
+     * @return the product number
+     */
     public String getProductNumber() {
         return productNumber;
     }
+
+    /**
+     * Sets the product number.
+     *
+     * @param productNumber the product number to set
+     */
     public void setProductNumber(String productNumber) {
         this.productNumber = productNumber;
     }
+
+    /**
+     * Gets the brand of the product.
+     *
+     * @return the brand of the product
+     */
     public String getBrand() {
         return brand;
     }
+
+    /**
+     * Sets the brand of the product.
+     *
+     * @param brand the brand to set
+     */
     public void setBrand(String brand) {
         this.brand = brand;
     }
+
+    /**
+     * Gets the model of the product.
+     *
+     * @return the model of the product
+     */
     public String getModel() {
         return model;
     }
+
+    /**
+     * Sets the model of the product.
+     *
+     * @param model the model to set
+     */
     public void setModel(String model) {
         this.model = model;
     }
+
+    /**
+     * Gets additional information about the product.
+     *
+     * @return additional information about the product
+     */
     public String getOtherInfo() {
         return otherInfo;
     }
+
+    /**
+     * Sets additional information about the product.
+     *
+     * @param otherInfo additional information to set
+     */
     public void setOtherInfo(String otherInfo) {
         this.otherInfo = otherInfo;
     }
+
+    /**
+     * Gets the weight of the product.
+     *
+     * @return the weight of the product
+     */
     public Float getWeight() {
         return weight;
     }
+
+    /**
+     * Sets the weight of the product.
+     *
+     * @param weight the weight to set
+     */
     public void setWeight(Float weight) {
         this.weight = weight;
     }
+
+    /**
+     * Gets the description of the product.
+     *
+     * @return the description of the product
+     */
     public String getDescription() {
         return description;
     }
+
+    /**
+     * Sets the description of the product.
+     *
+     * @param description the description to set
+     */
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Gets the price of the product.
+     *
+     * @return the price of the product
+     */
     public Double getPrice() {
         return price;
     }
+
+    /**
+     * Sets the price of the product.
+     *
+     * @param price the price to set
+     */
     public void setPrice(Double price) {
         this.price = price;
     }
+
+    /**
+     * Gets the creation timestamp of the product.
+     *
+     * @return the creation timestamp of the product
+     */
     public Date getCreateTimestamp() {
         return createTimestamp;
     }
+
+    /**
+     * Sets the creation timestamp of the product.
+     *
+     * @param createTimestamp the creation timestamp to set
+     */
     public void setCreateTimestamp(Date createTimestamp) {
         this.createTimestamp = createTimestamp;
     }
-    @Override            
+
+    /**
+     * Generates a hash code for the product based on its ID.
+     *
+     * @return the hash code for the product
+     */
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((product_id == null) ? 0 : product_id.hashCode());
         return result;
     }
+
+    /**
+     * Returns a string representation of the product.
+     *
+     * @return a string representation of the product
+     */
     @Override
     public String toString() {
         return "Product [product_id=" + product_id + ", brand=" + brand + ", model=" + model + "]";
     }
+
+    /**
+     * Compares two Product objects for equality based on their ID.
+     *
+     * @param obj the other Product object to compare to
+     * @return true if the products have the same ID, otherwise false
+     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Product other = (Product) obj;
         if (product_id == null) {
-            if (other.product_id != null)
+            if (other.product_id != null) {
                 return false;
-        } else if (!product_id.equals(other.product_id))
+            }
+        } else if (!product_id.equals(other.product_id)) {
             return false;
+        }
         return true;
     }
-
 }
