@@ -10,10 +10,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+
 /**
  * @author dani
  */
-
 @NamedQueries({
         @NamedQuery(name = "userByActive", query = "SELECT u FROM users u WHERE u.active = :active"),
         @NamedQuery(name = "userByName", query = "SELECT u FROM users u WHERE u.username = :username"),
