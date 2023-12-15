@@ -19,14 +19,24 @@ import javax.xml.bind.annotation.XmlRootElement;
  * The ProductsBought class represents information about products that were
  * bought, including the amount purchased and the timestamp of the purchase.
  *
- * This class is an entity mapped to the "products_bought" table in the "our_shop" schema.
- * It includes associations with the Customer and Product entities through foreign keys.
- *
  * @author alexIrusta
  */
 @Entity
 @Table(name = "products_bought", schema = "our_shop")
 @XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "purchaseProduct",
+            query = "UPDATE Customer c SET c.balance = c.balance - :price WHERE c.id = :customerId")
+    ,
+    @NamedQuery(name = "updateAmount",
+            query = "UPDATE ProductsBought pb SET pb.amount = pb.amount + :amount "
+            + "WHERE pb.customer.id = :customerId AND pb.product.id = :productId")
+    ,
+    @NamedQuery(name = "getProductsBought",
+            query = "SELECT pb.product.brand, pb.product.model, pb.product.weight, pb.product.description, pb.product.price, pb.product.otherInfo "
+            + "FROM ProductsBought pb "
+            + "WHERE pb.customer.id = :customerId")
+})
 public class ProductsBought implements Serializable {
 
     // The amount of products bought
@@ -81,6 +91,30 @@ public class ProductsBought implements Serializable {
      */
     public void setBoughtTimestamp(Date boughtTimestamp) {
         this.boughtTimestamp = boughtTimestamp;
+    }
+
+    public ProductsBoughtId getId() {
+        return id;
+    }
+
+    public void setId(ProductsBoughtId id) {
+        this.id = id;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     /**
