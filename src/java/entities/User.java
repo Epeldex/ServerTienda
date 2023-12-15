@@ -14,13 +14,36 @@ import javax.persistence.Table;
  * @author dani
  */
 @NamedQueries({
-    @NamedQuery(name = "userByActive", query = "SELECT u FROM users u WHERE u.active = :active")
-    ,
-        @NamedQuery(name = "userByName", query = "SELECT u FROM users u WHERE u.username = :username")
-    ,
-        @NamedQuery(name = "updatePassword", query = "UPDATE users u SET u.password = :password WHERE u.id = :id")
-    ,
-        @NamedQuery(name = "signIn", query = "SELECT u FROM users u WHERE u.username = :username AND u.password = :password")
+    @NamedQuery(
+        name = "findUserById", 
+        query = "SELECT * users u WHERE u.id = :id"),
+
+    @NamedQuery(
+        name = "findUserByUsername", 
+        query = "SELECT u FROM users u WHERE u.username = :username"),
+
+    @NamedQuery(
+        name = "findUserByActive",
+        query = "SELECT u FROM users u WHERE u.active = :active"),
+
+    @NamedQuery(
+        name = "findAllUsers",
+        query = "SELECT u FROM users u"),
+
+
+    @NamedQuery(
+        name = "updatePassword", 
+        query = "UPDATE users u SET u.password = :password WHERE u.id = :id"),
+    
+        
+    
+    @NamedQuery(
+        name = "signIn", 
+        query = "SELECT u FROM users u WHERE u.username = :username AND u.password = :password"),
+
+    @NamedQuery(
+        name = "removeUser", 
+        query = "DELETE FROM users u WHERE u.id = :id")
 })
 
 @Entity

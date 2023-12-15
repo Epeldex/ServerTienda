@@ -1,16 +1,14 @@
 package exceptions;
 
-/**
- *
- * @author 2dam
- */
 public class ReadException extends Exception {
-
-    public ReadException() {
-    }
+    private String message;
 
     public ReadException(String message) {
-        super(message);
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
 }

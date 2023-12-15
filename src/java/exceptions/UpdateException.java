@@ -1,16 +1,13 @@
 package exceptions;
 
-/**
- *
- * @author 2dam
- */
 public class UpdateException extends Exception {
-
-    public UpdateException() {
-    }
+    private String message;
 
     public UpdateException(String message) {
-        super(message);
+        this.message = message;
     }
 
+    public String getMessage() {
+        return message;
+    }
 }

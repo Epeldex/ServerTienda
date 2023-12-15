@@ -1,15 +1,13 @@
 package exceptions;
 
-/**
- *
- * @author 2dam
- */
 public class CreateException extends Exception {
-
-    public CreateException() {
-    }
+    private String message;
 
     public CreateException(String message) {
+        this.message = message;
+    }
 
+    public String getMessage() {
+        return message;
     }
 }

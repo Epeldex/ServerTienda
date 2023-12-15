@@ -1,16 +1,14 @@
 package exceptions;
 
-/**
- *
- * @author 2dam
- */
 public class DeleteException extends Exception {
-
-    public DeleteException() {
-    }
+    private String message;
 
     public DeleteException(String message) {
-        super(message);
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
 }
