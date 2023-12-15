@@ -10,5 +10,9 @@ package exceptions;
  * @author alexa
  */
 public class UpdateException extends Exception {
+
+    public UpdateException(String message) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

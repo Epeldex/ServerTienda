@@ -1,3 +1,4 @@
+package ejb;
 
 import ejb.local.SupplierManagerEJBLocal;
 import entities.Supplier;
