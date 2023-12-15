@@ -25,14 +25,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Customer.purchaseProduct",
-            query = "UPDATE Customer c SET c.balance = c.balance - :price WHERE c.id = :customerId"),
+            query = "UPDATE Customer c SET c.balance = c.balance - :price WHERE c.id = :customerId")
+    ,
     @NamedQuery(name = "Customer.updateAmount",
             query = "UPDATE ProductsBought pb SET pb.amount = pb.amount + :amount"
-            + "WHERE pb.customer.id = :customerId AND pb.product.id = :productId"),
+            + "WHERE pb.customer.id = :customerId AND pb.product.id = :productId")
+    ,
     @NamedQuery(name = "Customer.getProductsBought",
-            query = "SELECT pb.product.brand, pb.product.model, pb.product.weight, pb.product.description, pb.product.price, pb.product.otherInfo " +
-                    "FROM ProductsBought pb " +
-                    "WHERE pb.customer.id = :customerId")
+            query = "SELECT pb.product.brand, pb.product.model, pb.product.weight, pb.product.description, pb.product.price, pb.product.otherInfo "
+            + "FROM ProductsBought pb "
+            + "WHERE pb.customer.id = :customerId")
 })
 public class Customer extends User {
 

@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Entity representing suppliers. It contains fields such as supplier ID, name,
@@ -189,6 +190,25 @@ public class Supplier implements Serializable {
      */
     public void setCreateTimestamp(Date createTimestamp) {
         this.createTimestamp = createTimestamp;
+    }
+
+    /**
+     * Get the set of products associated with the supplier.
+     *
+     * @return the set of products
+     */
+    @XmlTransient
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    /**
+     * Set the set of products associated with the supplier.
+     *
+     * @param products the set of products to be set
+     */
+    public void setProducts(Set<Product> products) {
+        this.products = products;
     }
 
     /**

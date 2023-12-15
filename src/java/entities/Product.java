@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import static javax.persistence.GenerationType.AUTO;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -91,14 +90,24 @@ public class Product implements Serializable {
      */
     private Double price;
 
+    /**
+     * Supplier of the Product
+     */
     @MapsId("supplier_id")
     @ManyToOne
     private Supplier supplier;
 
+    /**
+     * Tag of the product
+     *
+     */
     @MapsId("tag_id")
     @ManyToOne
     private Tag tag;
 
+    /**
+     * Collection of products bought by the customer
+     */
     @OneToMany(fetch = EAGER, cascade = ALL, mappedBy = "product")
     private Set<ProductsBought> productsBought;
     /**
@@ -267,6 +276,60 @@ public class Product implements Serializable {
      */
     public void setCreateTimestamp(Date createTimestamp) {
         this.createTimestamp = createTimestamp;
+    }
+
+    /**
+     * Gets the supplier of the product.
+     *
+     * @return the supplier of the product
+     */
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    /**
+     * Sets the supplier of the product.
+     *
+     * @param supplier the supplier to set
+     */
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+
+    /**
+     * Gets the tag associated with the product.
+     *
+     * @return the tag associated with the product
+     */
+    public Tag getTag() {
+        return tag;
+    }
+
+    /**
+     * Sets the tag associated with the product.
+     *
+     * @param tag the tag to set
+     */
+    public void setTag(Tag tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * Gets the set of products bought by the customer.
+     *
+     * @return the set of products bought by the customer
+     */
+    public Set<ProductsBought> getProductsBought() {
+        return productsBought;
+    }
+
+    /**
+     * Sets the set of products bought by the customer.
+     *
+     * @param productsBought the set of products bought to set
+     */
+    public void setProductsBought(Set<ProductsBought> productsBought) {
+        this.productsBought = productsBought;
     }
 
     /**
