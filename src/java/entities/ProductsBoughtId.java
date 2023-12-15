@@ -2,6 +2,7 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Embeddable;
 
 /**
  * The ProductsBoughtId class represents the composite key for the
@@ -11,6 +12,7 @@ import java.util.Objects;
  * @author Alex Irusta
  *
  */
+@Embeddable
 public class ProductsBoughtId implements Serializable {
 
     // The identifier for the product

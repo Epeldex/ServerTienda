@@ -10,14 +10,16 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-
 /**
  * @author dani
  */
 @NamedQueries({
-        @NamedQuery(name = "userByActive", query = "SELECT u FROM users u WHERE u.active = :active"),
-        @NamedQuery(name = "userByName", query = "SELECT u FROM users u WHERE u.username = :username"),
-        @NamedQuery(name = "updatePassword", query = "UPDATE users u SET u.password = :password WHERE u.id = :id"),
+    @NamedQuery(name = "userByActive", query = "SELECT u FROM users u WHERE u.active = :active")
+    ,
+        @NamedQuery(name = "userByName", query = "SELECT u FROM users u WHERE u.username = :username")
+    ,
+        @NamedQuery(name = "updatePassword", query = "UPDATE users u SET u.password = :password WHERE u.id = :id")
+    ,
         @NamedQuery(name = "signIn", query = "SELECT u FROM users u WHERE u.username = :username AND u.password = :password")
 })
 
@@ -25,7 +27,7 @@ import javax.persistence.Table;
 @XmlRootElement(name = "user")
 @Table(name = "user", schema = "our_shop")
 public class User implements Serializable {
-    
+
     @Id
     protected Integer id;
     private String username;
@@ -84,32 +86,35 @@ public class User implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof User))
+        if (!(obj instanceof User)) {
             return false;
+        }
 
         User other = (User) obj;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
+        }
 
         return true;
     }
+
     /**
-     * 
+     *
      * @param obj object to compare with this user
-     * @return true if every attribute of both objects 
-     * are identical, including the id. false if not.
+     * @return true if every attribute of both objects are identical, including
+     * the id. false if not.
      */
     public boolean everythingIsEqual(Object obj) {
-        if (!equals(obj))
+        if (!equals(obj)) {
             return false;
+        }
 
         User user = User.class.cast(obj);
-        
-        return 
-            this.username == user.getUsername() &&
-            this.password == user.getPassword() &&
-            this.active == user.active &&
-            this.userType == user.getUserType(); 
+
+        return this.username == user.getUsername()
+                && this.password == user.getPassword()
+                && this.active == user.active
+                && this.userType == user.getUserType();
     }
 
     @Override

@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
             query = "SELECT c "
             + "FROM Customer c "
             + "WHERE c.userId = :userId")
+
 })
 public class Customer extends User {
 
