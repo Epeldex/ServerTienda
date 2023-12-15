@@ -2,16 +2,17 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Embeddable;
 
 /**
- * The ProductsBoughtId class represents the composite key for the ProductsBought entity.
- * It combines the identifiers for both the product and customer to uniquely identify
- * a record in the "products_bought" table.
+ * The ProductsBoughtId class represents the composite key for the
+ * ProductsBought entity. It combines the identifiers for both the product and
+ * customer to uniquely identify a record in the "products_bought" table.
  *
- * This class is used as the embedded identifier for the ProductsBought entity.
+ * @author Alex Irusta
  *
- * @author alexIrusta
  */
+@Embeddable
 public class ProductsBoughtId implements Serializable {
 
     // The identifier for the product

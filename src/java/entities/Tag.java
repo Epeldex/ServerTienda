@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Entity representing tags used to specify proctct types It contains fields
@@ -73,6 +74,7 @@ public class Tag implements Serializable {
     /**
      * Collection of products with that tag
      */
+    @XmlTransient
     @OneToMany(fetch = EAGER, cascade = ALL, mappedBy = "products")
     private Set<Product> products;
 
@@ -164,6 +166,25 @@ public class Tag implements Serializable {
      */
     public void setCreateTimestamp(Date createTimestamp) {
         this.createTimestamp = createTimestamp;
+    }
+
+    /**
+     * Get the set of products associated with the Tag.
+     *
+     * @return the set of products
+     */
+    @XmlTransient
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    /**
+     * Set the set of products associated with the Tag.
+     *
+     * @param products the set of products to be set
+     */
+    public void setProducts(Set<Product> products) {
+        this.products = products;
     }
 
     /**
