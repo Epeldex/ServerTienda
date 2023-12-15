@@ -2,7 +2,7 @@ package exceptions;
 
 /**
  *
- * @author alexa
+ * @author 2dam
  */
 public class ReadException extends Exception {
 

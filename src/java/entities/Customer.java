@@ -14,9 +14,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  * The Customer class represents a customer entity, extending the User class,
  * and encapsulates information about a customer, such as their full name,
  * email, address, phone number, and balance.
- * <p>
- * This class includes methods to retrieve and modify customer information.
- * </p>
  *
  * @author alexIrusta
  */
@@ -24,17 +21,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "customer", schema = "our_shop")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Customer.purchaseProduct",
-            query = "UPDATE Customer c SET c.balance = c.balance - :price WHERE c.id = :customerId")
+    @NamedQuery(name = "updatePersonalInfoById",
+            query = "UPDATE Customer c SET c.fullName = :fullName, c.email = :email, c.street = :street, "
+            + "c.postalCode = :postalCode, c.city = :city, c.phone = :phone, c.balance = :balance, "
+            + "c.username = :username, c.password = :password WHERE c.id = :customerIdUser")
     ,
-    @NamedQuery(name = "Customer.updateAmount",
-            query = "UPDATE ProductsBought pb SET pb.amount = pb.amount + :amount"
-            + "WHERE pb.customer.id = :customerId AND pb.product.id = :productId")
+    @NamedQuery(name = "deleteUserById",
+            query = "DELETE FROM User u WHERE u.id = :userId")
     ,
-    @NamedQuery(name = "Customer.getProductsBought",
-            query = "SELECT pb.product.brand, pb.product.model, pb.product.weight, pb.product.description, pb.product.price, pb.product.otherInfo "
-            + "FROM ProductsBought pb "
-            + "WHERE pb.customer.id = :customerId")
+    @NamedQuery(name = "getCustomer",
+            query = "SELECT c "
+            + "FROM Customer c "
+            + "WHERE c.userId = :userId")
+
 })
 public class Customer extends User {
 
