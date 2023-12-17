@@ -14,15 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author dani
  */
-
-@NamedQueries({
-        @NamedQuery(name = "", query = "")
-})
-
 @Entity
 @XmlRootElement(name = "admin")
-@Table(name = "user", schema = "our_shop")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "admin", schema = "our_shop")
 public class Admin extends User {
     private LocalDate lastAccess;
 

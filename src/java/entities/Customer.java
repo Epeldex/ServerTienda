@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "customer", schema = "our_shop")
 @XmlRootElement
+
 @NamedQueries({
     @NamedQuery(name = "updatePersonalInfoById",
             query = "UPDATE Customer c SET c.fullName = :fullName, c.email = :email, c.street = :street, "
@@ -30,9 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
             query = "DELETE FROM User u WHERE u.id = :userId")
     ,
     @NamedQuery(name = "getCustomer",
-            query = "SELECT c "
-            + "FROM Customer c "
-            + "WHERE c.userId = :userId")
+            query = "SELECT c FROM Customer c WHERE c.id = :userId")
 
 })
 public class Customer extends User {

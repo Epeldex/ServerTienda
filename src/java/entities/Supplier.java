@@ -1,7 +1,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Set;
 import static javax.persistence.CascadeType.ALL;
 import javax.persistence.Entity;
@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "supplier", schema = "our_shop")
 @XmlRootElement
-
 @NamedQueries({
     @NamedQuery(name = "updateSupplier",
             query = "UPDATE Supplier s SET s.name = :name, s.phone = :phone, s.country = :country, s.zip = :zip WHERE s.supplier_id = :supplierId")
@@ -44,6 +43,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "selectSupplierById",
             query = "SELECT s FROM Supplier s WHERE s.supplier_id = :supplierId")
 })
+
 
 public class Supplier implements Serializable {
 

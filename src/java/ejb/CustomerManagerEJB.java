@@ -126,7 +126,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
             // Return the single result as a Customer object.
             return (Customer) query.getSingleResult();
         } catch (Exception e) {
-            throw new ReadException("Error getting customer", e);
+            throw new ReadException("Error getting customer");
         }
     }
 }

@@ -24,7 +24,7 @@ public interface SupplierManagerEJBLocal {
      * information.
      * @throws UpdateException If there is any exception during processing.
      */
-    void updateSupplier(Supplier supplier) throws UpdateException;
+    public void updateSupplier(Supplier supplier) throws UpdateException;
 
     /**
      * Deletes a supplier from the underlying application storage.
@@ -32,7 +32,7 @@ public interface SupplierManagerEJBLocal {
      * @param supplierId The ID of the supplier to be deleted.
      * @throws DeleteException If there is any exception during processing.
      */
-    void deleteSupplier(Integer supplierId) throws DeleteException;
+    public void deleteSupplier(Integer supplierId) throws DeleteException;
 
     /**
      * Retrieves a list of all suppliers from the application data storage.
@@ -40,7 +40,7 @@ public interface SupplierManagerEJBLocal {
      * @return A List of {@link Supplier} objects.
      * @throws ReadException If there is any exception during processing.
      */
-    List<Supplier> selectAllSuppliers() throws ReadException;
+    public List<Supplier> selectAllSuppliers() throws ReadException;
 
     /**
      * Retrieves a supplier by its ID from the application data storage.
@@ -49,7 +49,7 @@ public interface SupplierManagerEJBLocal {
      * @return The {@link Supplier} object containing supplier data.
      * @throws ReadException If there is any exception during processing.
      */
-    Supplier selectSupplierById(Integer supplierId) throws ReadException;
+    public Supplier selectSupplierById(Integer supplierId) throws ReadException;
 
     /**
      * Inserts a new supplier into the underlying application storage.
@@ -58,6 +58,6 @@ public interface SupplierManagerEJBLocal {
      * new supplier.
      * @throws CreateException If there is any exception during processing.
      */
-    void insertSupplier(Supplier supplier) throws CreateException;
+    public void insertSupplier(Supplier supplier) throws CreateException;
 
 }

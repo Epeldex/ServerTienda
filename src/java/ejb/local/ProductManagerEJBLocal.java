@@ -24,7 +24,7 @@ public interface ProductManagerEJBLocal {
      * product to update.
      * @throws UpdateException If there is any exception during processing.
      */
-    void updateProduct(Product product) throws UpdateException;
+    public void updateProduct(Product product) throws UpdateException;
 
     /**
      * Deletes a product from the underlying application storage.
@@ -32,7 +32,7 @@ public interface ProductManagerEJBLocal {
      * @param productId The ID of the product to be deleted.
      * @throws DeleteException If there is any exception during processing.
      */
-    void deleteProduct(Integer productId) throws DeleteException;
+    public void deleteProduct(Integer productId) throws DeleteException;
 
     /**
      * Retrieves a list of all products from the application data storage.
@@ -40,7 +40,7 @@ public interface ProductManagerEJBLocal {
      * @return A List of {@link Product} objects.
      * @throws ReadException If there is any exception during processing.
      */
-    List<Product> selectAllProducts() throws ReadException;
+    public List<Product> selectAllProducts() throws ReadException;
 
     /**
      * Retrieves a product by its ID from the application data storage.
@@ -49,7 +49,7 @@ public interface ProductManagerEJBLocal {
      * @return The {@link Product} object containing product data.
      * @throws ReadException If there is any exception during processing.
      */
-    Product selectProductById(Integer productId) throws ReadException;
+    public Product selectProductById(Integer productId) throws ReadException;
 
     /**
      * Inserts a new product into the underlying application storage.
@@ -58,6 +58,6 @@ public interface ProductManagerEJBLocal {
      * new product.
      * @throws CreateException If there is any exception during processing.
      */
-    void insertProduct(Product product) throws CreateException;
+    public void insertProduct(Product product) throws CreateException;
 
 }

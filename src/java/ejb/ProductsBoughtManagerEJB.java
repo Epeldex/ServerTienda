@@ -41,7 +41,8 @@ public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
     public void purchaseProduct(Product product, Integer amount, Integer customerId) throws UpdateException {
         try {
             // Find the associated Customer
-            Customer customer = entityManager.find(Customer.class, customerId);
+            Customer customer = (Customer) entityManager.createNamedQuery("getCustomer")
+                    .setParameter("id", customerId).getSingleResult();
 
             // Create a new ProductsBought instance with the composite key
             ProductsBought productsBought = new ProductsBought();
@@ -58,7 +59,7 @@ public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
             updateQuery.executeUpdate();
 
         } catch (Exception e) {
-            throw new UpdateException("Error purchasing product", e);
+            throw new UpdateException("Error purchasing product");
         }
     }
 
@@ -88,7 +89,7 @@ public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
             updateQuery.executeUpdate();
 
         } catch (Exception e) {
-            throw new UpdateException("Error updating amount", e);
+            throw new UpdateException("Error updating amount");
         }
     }
 
@@ -108,7 +109,7 @@ public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
             return query.getResultList();
 
         } catch (Exception e) {
-            throw new ReadException("Error getting products bought", e);
+            throw new ReadException("Error getting products bought");
         }
     }
 }

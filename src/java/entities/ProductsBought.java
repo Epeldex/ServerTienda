@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
             + "FROM ProductsBought pb "
             + "WHERE pb.customer.id = :customerId")
 })
+
 public class ProductsBought implements Serializable {
 
     // The amount of products bought

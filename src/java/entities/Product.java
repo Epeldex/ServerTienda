@@ -1,7 +1,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Set;
 import static javax.persistence.CascadeType.ALL;
 import javax.persistence.Entity;
@@ -19,6 +19,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Represents a product entity with various attributes such as product ID,
@@ -40,11 +41,10 @@ import javax.xml.bind.annotation.XmlRootElement;
             query = "DELETE FROM Product p WHERE p.product_id = :productId")
     ,
    @NamedQuery(name = "selectAllProducts",
-            query = "SELECT p FROM Product ORDER BY p.product_id ASC")
+            query = "SELECT p FROM Product p ORDER BY p.product_id ASC")
     ,
     @NamedQuery(name = "selectProductById",
-            query = "SELECT p FROM Product WHERE p.product_id = :product_id")})
-
+            query = "SELECT p FROM Product p WHERE p.product_id = :product_id")})
 public class Product implements Serializable {
 
     /**
@@ -319,6 +319,7 @@ public class Product implements Serializable {
      *
      * @return the set of products bought by the customer
      */
+    @XmlTransient
     public Set<ProductsBought> getProductsBought() {
         return productsBought;
     }

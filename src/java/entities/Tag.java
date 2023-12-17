@@ -1,7 +1,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Set;
 import static javax.persistence.CascadeType.ALL;
 import javax.persistence.Entity;
@@ -41,6 +41,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "selectTagById",
             query = "SELECT t FROM Tag t WHERE t.tag_id = :tagId")
 })
+
+
 public class Tag implements Serializable {
 
     /**
@@ -75,7 +77,7 @@ public class Tag implements Serializable {
      * Collection of products with that tag
      */
     @XmlTransient
-    @OneToMany(fetch = EAGER, cascade = ALL, mappedBy = "products")
+    @OneToMany(fetch = EAGER, cascade = ALL, mappedBy = "tag")
     private Set<Product> products;
 
     /**

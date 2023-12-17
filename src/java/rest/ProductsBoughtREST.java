@@ -18,11 +18,11 @@ import java.util.logging.Logger;
  * operations related to purchased products. It exposes endpoints for purchasing
  * a product, updating the amount of a purchased product, and retrieving a list
  * of products bought by a customer.
- * 
+ *
  * @author Alex Irusta
  *
  */
-@Path("/productsBought")
+@Path("productsBought")
 public class ProductsBoughtREST {
 
     private static final Logger LOGGER = Logger.getLogger("ourshop.ejb");
@@ -36,18 +36,18 @@ public class ProductsBoughtREST {
      * @param product The Product object to be purchased.
      * @param amount The quantity of the product to be purchased.
      * @param customerId The ID of the customer making the purchase.
-     * @return Response indicating the success or failure of the operation.
      */
     @POST
-    @Path("/purchaseProduct")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response purchaseProduct(Product product, Integer amount, Integer customerId) {
+    @Consumes(MediaType.APPLICATION_XML)
+    @Path("{amount}/{customerId}")
+    public void purchaseProduct(Product product,
+            @PathParam("amount") Integer amount,
+            @PathParam("customerId") Integer customerId) {
         try {
             productsBoughtManager.purchaseProduct(product, amount, customerId);
-            return Response.ok().build();
         } catch (UpdateException e) {
             LOGGER.log(Level.SEVERE, "Error purchasing product", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            throw new InternalServerErrorException(e);
         }
     }
 
@@ -58,18 +58,17 @@ public class ProductsBoughtREST {
      * @param customerId The ID of the customer who purchased the product.
      * @param productId The ID of the product to be updated.
      * @param amount The new quantity of the purchased product.
-     * @return Response indicating the success or failure of the operation.
      */
     @PUT
-    @Path("/updateAmount")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateAmount(Integer customerId, Integer productId, Integer amount) {
+    @Path("{customerId}/{productId}/{amount}")
+    public void updateAmount(@PathParam("customerId") Integer customerId,
+            @PathParam("productId") Integer productId,
+            @PathParam("amount") Integer amount) {
         try {
             productsBoughtManager.updateAmount(customerId, productId, amount);
-            return Response.ok().build();
         } catch (UpdateException e) {
             LOGGER.log(Level.SEVERE, "Error updating amount", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            throw new InternalServerErrorException(e);
         }
     }
 
@@ -83,15 +82,14 @@ public class ProductsBoughtREST {
      * message.
      */
     @GET
-    @Path("/getProductsBought/{customerId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductsBought(@PathParam("customerId") String customerId) {
+    @Path("{customerId}")
+    @Produces(MediaType.APPLICATION_XML)
+    public List<Product> getProductsBought(@PathParam("customerId") String customerId) {
         try {
-            List<Product> productsBought = productsBoughtManager.getProductsBought(customerId);
-            return Response.ok(productsBought).build();
+            return productsBoughtManager.getProductsBought(customerId);
         } catch (ReadException e) {
             LOGGER.log(Level.SEVERE, "Error getting products bought", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            throw new InternalServerErrorException(e);
         }
     }
 }

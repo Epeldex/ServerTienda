@@ -29,9 +29,13 @@ public class ApplicationConfig extends Application {
      * @param resources The resource's classes Set.
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(rest.AdminREST.class);
+        resources.add(rest.CustomerREST.class);
         resources.add(rest.ProductREST.class);
+        resources.add(rest.ProductsBoughtREST.class);
         resources.add(rest.SupplierREST.class);
         resources.add(rest.TagREST.class);
+        resources.add(rest.UserREST.class);
     }
 
 }
