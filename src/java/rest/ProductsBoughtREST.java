@@ -2,6 +2,7 @@ package rest;
 
 import ejb.local.ProductsBoughtManagerEJBLocal;
 import entities.Product;
+import entities.ProductsBought;
 import exceptions.ReadException;
 import exceptions.UpdateException;
 
@@ -33,18 +34,15 @@ public class ProductsBoughtREST {
     /**
      * Handles the HTTP POST request for purchasing a product.
      *
-     * @param product The Product object to be purchased.
-     * @param amount The quantity of the product to be purchased.
-     * @param customerId The ID of the customer making the purchase.
+     * @param productBought 
      */
     @POST
     @Consumes(MediaType.APPLICATION_XML)
-    @Path("{amount}/{customerId}")
-    public void purchaseProduct(Product product,
-            @PathParam("amount") Integer amount,
-            @PathParam("customerId") Integer customerId) {
+    public void purchaseProduct(ProductsBought productBought) {
         try {
-            productsBoughtManager.purchaseProduct(product, amount, customerId);
+            productsBoughtManager.purchaseProduct(productBought.getProduct(),
+                    productBought.getAmount(),
+                    productBought.getCustomer().getId());
         } catch (UpdateException e) {
             LOGGER.log(Level.SEVERE, "Error purchasing product", e);
             throw new InternalServerErrorException(e);
