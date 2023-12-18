@@ -1,4 +1,4 @@
-package ejb;
+package ejb.local;
 
 import entities.Customer;
 import entities.User;

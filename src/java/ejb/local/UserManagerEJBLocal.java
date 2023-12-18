@@ -1,4 +1,4 @@
-package ejb;
+package ejb.local;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
 
-public interface IUserManager {
+public interface UserManagerEJBLocal {
     /**
      * Finds a {@link User} by its id. 
      * @param id The id of the user to be found.

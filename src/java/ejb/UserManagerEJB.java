@@ -1,5 +1,6 @@
 package ejb;
 
+import ejb.local.UserManagerEJBLocal;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,15 +14,17 @@ import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
+import javax.persistence.PersistenceContext;
 
 @Stateless
-public class EJBUserManager implements IUserManager {
+public class UserManagerEJB implements UserManagerEJBLocal {
     /**
      * Logger of the class.
      */
     private static final Logger LOGGER =
             Logger.getLogger("ejb");
 
+    @PersistenceContext
     private EntityManager em;
     /**
      * method that searches a user by id.

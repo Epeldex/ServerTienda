@@ -1,5 +1,6 @@
 package ejb;
 
+import ejb.local.CustomerManagerEJBLocal;
 import entities.Customer;
 import entities.User;
 import exceptions.CreateException;

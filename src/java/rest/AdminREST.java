@@ -1,6 +1,5 @@
 package rest;
 
-import ejb.IAdminManager;
 import entities.Admin;
 import exceptions.CreateException;
 import exceptions.DeleteException;
@@ -13,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ejb.local.AdminManagerEJBLocal;
 
 @Path("admins")
 public class AdminREST {
@@ -20,7 +20,7 @@ public class AdminREST {
     private static final Logger LOGGER = Logger.getLogger("rest");
 
     @EJB
-    private IAdminManager ejb;
+    private AdminManagerEJBLocal ejb;
 
     @PUT
     @Path("updateLastAccess/{id}/{date}")
@@ -37,8 +37,8 @@ public class AdminREST {
 
     @POST
     @Path("signin")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_XML)
     public Admin signIn(Admin admin) {
         try {
             LOGGER.info("AdminRESTful service: Signing in admin.");
@@ -50,7 +50,7 @@ public class AdminREST {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_XML)
     public void createAdmin(Admin admin) {
         try {
             LOGGER.log(Level.INFO, "AdminRESTful service: Creating new admin {0}.", admin);
@@ -62,7 +62,7 @@ public class AdminREST {
     }
 
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_XML)
     public void updateAdmin(Admin admin) {
         try {
             LOGGER.log(Level.INFO, "AdminRESTful service: Updating admin {0}.", admin);

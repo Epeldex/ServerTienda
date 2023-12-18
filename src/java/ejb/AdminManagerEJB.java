@@ -1,5 +1,6 @@
 package ejb;
 
+import ejb.local.AdminManagerEJBLocal;
 import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,13 +16,14 @@ import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
+import javax.persistence.PersistenceContext;
 
 @Stateless
-public class EJBAdminManager implements IAdminManager{
+public class AdminManagerEJB implements AdminManagerEJBLocal{
 
     private static final Logger LOGGER =
             Logger.getLogger("ejb");
-
+    @PersistenceContext
     private EntityManager em;
 
     @Override
@@ -95,7 +97,7 @@ public class EJBAdminManager implements IAdminManager{
         try {
             User user;
             LOGGER.info("UserManager: Finding user by login.");
-            user = new EJBUserManager().findUserById(id);  
+            user = new UserManagerEJB().findUserById(id);  
 
             if (user.getUserType().equals(UserType.ADMIN))
                 em.createNamedQuery("removeUser")

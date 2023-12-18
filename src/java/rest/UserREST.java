@@ -1,6 +1,5 @@
 package rest;
 
-import ejb.IUserManager;
 import entities.User;
 import exceptions.CreateException;
 import exceptions.DeleteException;
@@ -13,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ejb.local.UserManagerEJBLocal;
 
 @Path("users")
 public class UserREST {
@@ -20,7 +20,7 @@ public class UserREST {
     private static final Logger LOGGER = Logger.getLogger("rest");
 
     @EJB
-    private IUserManager ejb;
+    private UserManagerEJBLocal ejb;
 
     @POST
     @Consumes(MediaType.APPLICATION_XML)

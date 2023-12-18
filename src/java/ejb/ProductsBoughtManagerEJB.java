@@ -1,5 +1,6 @@
 package ejb;
 
+import ejb.local.ProductsBoughtManagerEJBLocal;
 import entities.Customer;
 import entities.Product;
 import entities.ProductsBought;

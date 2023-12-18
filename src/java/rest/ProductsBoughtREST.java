@@ -1,6 +1,6 @@
 package rest;
 
-import ejb.ProductsBoughtManagerEJBLocal;
+import ejb.local.ProductsBoughtManagerEJBLocal;
 import entities.Product;
 import exceptions.ReadException;
 import exceptions.UpdateException;

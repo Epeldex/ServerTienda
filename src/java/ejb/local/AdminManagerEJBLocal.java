@@ -1,4 +1,4 @@
-package ejb;
+package ejb.local;
 
 import java.time.LocalDate;
 
@@ -8,7 +8,7 @@ import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
 
-public interface IAdminManager {
+public interface AdminManagerEJBLocal {
     /**
      * Modifies the last access of a specific {@link Admin}.
      * @param id Id of the {@link Admin} whose password is to be changed.

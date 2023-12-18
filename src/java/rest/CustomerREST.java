@@ -1,6 +1,6 @@
 package rest;
 
-import ejb.CustomerManagerEJBLocal;
+import ejb.local.CustomerManagerEJBLocal;
 import entities.Customer;
 import entities.User;
 import exceptions.CreateException;
@@ -27,7 +27,6 @@ import java.util.logging.Logger;
  * 
  */
 @Path("customers")
-@Stateless
 public class CustomerREST {
 
     private static final Logger LOGGER = Logger.getLogger("ejb");
