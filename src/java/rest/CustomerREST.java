@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * customer details.
  *
  * @author Alex Irusta
- * 
+ *
  */
 @Path("customers")
 public class CustomerREST {
@@ -62,14 +62,13 @@ public class CustomerREST {
      */
     @DELETE
     @Path("delete/{id}")
-    public Response deleteUser(@PathParam("id") String id) {
+    public void deleteUser(@PathParam("id") String id) {
         try {
             LOGGER.info("CustomerRESTful service: Deleting customer by id=" + id);
             customerManagerEJB.deleteUserById(id);
-            return Response.ok().build();
         } catch (DeleteException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception deleting customer.", ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
+            throw new InternalServerErrorException(ex);
         }
     }
 
@@ -82,14 +81,13 @@ public class CustomerREST {
     @POST
     @Path("insertUser")
     @Consumes(MediaType.APPLICATION_XML)
-    public Response insertUser(User user) {
+    public void insertUser(Customer customer) {
         try {
             LOGGER.info("CustomerRESTful service: Inserting user.");
-            customerManagerEJB.insertUser(user);
-            return Response.ok().build();
+            customerManagerEJB.insertUser(customer);
         } catch (CreateException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception inserting user.", ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
+            throw new InternalServerErrorException(ex);
         }
     }
 

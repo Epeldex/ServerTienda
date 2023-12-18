@@ -6,7 +6,7 @@ import javax.ws.rs.core.Application;
 /**
  * This is the User management RESTful web service application class.
  *
- * @author 
+ * @author
  */
 @javax.ws.rs.ApplicationPath("webresources")
 public class ApplicationConfig extends Application {
@@ -30,9 +30,9 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(rest.AdminREST.class);
-       // resources.add(rest.CustomerREST.class);
         resources.add(rest.CustomerREST.class);
-       // resources.add(rest.ProductsBoughtREST.class);
+        resources.add(rest.CustomerREST.class);
+        resources.add(rest.ProductsBoughtREST.class);
         resources.add(rest.ProductREST.class);
         resources.add(rest.ProductsBoughtREST.class);
         resources.add(rest.SupplierREST.class);
