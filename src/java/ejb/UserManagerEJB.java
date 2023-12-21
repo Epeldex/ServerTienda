@@ -130,8 +130,8 @@ public class UserManagerEJB implements UserManagerEJBLocal {
     public void updatePassword(Integer id, String password) throws UpdateException {
         try {
             LOGGER.info("UserManager: Finding user by login.");
-            //if (userById(id) != null)
-            //    em.createNamedQuery("updatePassword");
+            if (findUserById(id) != null)
+                em.createNamedQuery("updatePassword");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
                     e.getMessage());

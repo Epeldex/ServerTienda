@@ -14,14 +14,40 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import ejb.local.UserManagerEJBLocal;
 
+// ... (Previous imports and class-level comments)
+
+/**
+ * This class provides CRUD (Create, Read, Update, Delete) operations for User
+ * entities using XML as the data format. It integrates with the
+ * {@link UserManagerEJBLocal} EJB for handling business logic.
+ * 
+ * Note: Some methods have incorrect HTTP method annotations (e.g., findUserByActive
+ * should use @GET instead of @POST) and the correct method should be applied
+ * based on the intended functionality.
+ * 
+ * @author dani
+ */
 @Path("users")
 public class UserREST {
 
+    /**
+     * Logger for the class.
+     */
     private static final Logger LOGGER = Logger.getLogger("rest");
 
+    /**
+     * EJB for managing User entity CRUD operations.
+     */
     @EJB
     private UserManagerEJBLocal ejb;
 
+    /**
+     * Creates a new User using XML data.
+     *
+     * @param user The {@link User} object containing the user data.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     public void createUser(User user) {
@@ -34,6 +60,13 @@ public class UserREST {
         }
     }
 
+    /**
+     * Updates an existing User using XML data.
+     *
+     * @param user The {@link User} object containing the updated user data.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_XML)
     public void updateUser(User user) {
@@ -46,6 +79,13 @@ public class UserREST {
         }
     }
 
+    /**
+     * Deletes a User by its ID.
+     *
+     * @param id The ID of the User to be deleted.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @DELETE
     @Path("{id}")
     public void deleteUser(@PathParam("id") Integer id) {
@@ -58,6 +98,14 @@ public class UserREST {
         }
     }
 
+    /**
+     * Retrieves a User by its ID.
+     *
+     * @param id The ID of the User to be retrieved.
+     * @return The retrieved {@link User} object.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_XML)
@@ -73,6 +121,13 @@ public class UserREST {
         return user;
     }
 
+    /**
+     * Retrieves all Users.
+     *
+     * @return A List of {@link User} objects representing all users.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public List<User> findAllUsers() {
@@ -87,6 +142,14 @@ public class UserREST {
         return users;
     }
 
+    /**
+     * Retrieves a User by its username.
+     *
+     * @param username The username of the User to be retrieved.
+     * @return The retrieved {@link User} object.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @GET
     @Path("username/{username}")
     @Produces(MediaType.APPLICATION_XML)
@@ -102,6 +165,15 @@ public class UserREST {
         return user;
     }
 
+    /**
+     * Retrieves Users by their active status.
+     *
+     * @param active The active status of the Users to be retrieved.
+     * @return A List of {@link User} objects representing users with the given
+     * active status.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @GET
     @Path("active/{active}")
     @Produces(MediaType.APPLICATION_XML)
@@ -118,6 +190,14 @@ public class UserREST {
         return users;
     }
 
+    /**
+     * Signs in a User using XML data.
+     *
+     * @param user The {@link User} object containing the user data for sign-in.
+     * @return The signed-in {@link User} object.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @POST
     @Path("signin")
     @Consumes(MediaType.APPLICATION_XML)
@@ -132,15 +212,25 @@ public class UserREST {
         }
     }
 
+    /**
+     * Updates the password of a User by ID.
+     *
+     * @param id The ID of the User whose password is to be updated.
+     * @param password The new password.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @PUT
-    @Path("updatepassword/{id}/{password}")
-    public void updatePassword(@PathParam("id") Integer id, @PathParam("password") String password) {
+    @Consumes(MediaType.APPLICATION_XML)
+    @Path("updatepassword")
+    public void updatePassword(@PathParam("user") User user) {
         try {
             LOGGER.info("UserRESTful service: Updating user password.");
-            ejb.updatePassword(id, password);
+            ejb.updatePassword(user.getId(), user.getPassword());
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception updating user password, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
     }
 }
+
