@@ -187,4 +187,13 @@ public class Customer extends User {
     public void setBalance(Double balance) {
         this.balance = balance;
     }
+
+    public Set<ProductsBought> getProductsBought() {
+        return productsBought;
+    }
+
+    public void setProductsBought(Set<ProductsBought> productsBought) {
+        this.productsBought = productsBought;
+    }
+
 }
