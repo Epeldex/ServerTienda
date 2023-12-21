@@ -41,16 +41,14 @@ public class CustomerREST {
      * @return Response indicating the success or failure of the operation.
      */
     @PUT
-    @Path("updatePersonalInfo")
     @Consumes(MediaType.APPLICATION_XML)
-    public Response updatePersonalInfo(Customer customer) {
+    public void updatePersonalInfo(Customer customer) {
         try {
             LOGGER.info("CustomerRESTful service: Updating customer information.");
             customerManagerEJB.updatePersonalInfoById(customer);
-            return Response.ok().build();
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception updating customer information.", ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
+            throw new InternalServerErrorException(ex);
         }
     }
 
@@ -61,7 +59,7 @@ public class CustomerREST {
      * @return Response indicating the success or failure of the operation.
      */
     @DELETE
-    @Path("delete/{id}")
+    @Path("{id}")
     public void deleteUser(@PathParam("id") String id) {
         try {
             LOGGER.info("CustomerRESTful service: Deleting customer by id=" + id);
@@ -79,7 +77,6 @@ public class CustomerREST {
      * @return Response indicating the success or failure of the operation.
      */
     @POST
-    @Path("insertUser")
     @Consumes(MediaType.APPLICATION_XML)
     public void insertUser(Customer customer) {
         try {
@@ -99,16 +96,15 @@ public class CustomerREST {
      * message.
      */
     @GET
-    @Path("getCustomer/{userId}")
+    @Path("{userId}")
     @Produces(MediaType.APPLICATION_XML)
-    public Response getCustomer(@PathParam("userId") Integer userId) {
+    public Customer getCustomer(@PathParam("userId") Integer userId) {
         try {
             LOGGER.info("CustomerRESTful service: Get customer by id=" + userId);
-            Customer customer = customerManagerEJB.getCustomer(userId);
-            return Response.ok(customer).build();
+            return customerManagerEJB.getCustomer(userId);
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception getting customer.", ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
+            throw new InternalServerErrorException(ex);
         }
     }
 }

@@ -2,6 +2,7 @@ package ejb.local;
 
 import entities.Customer;
 import entities.Product;
+import entities.ProductsBought;
 import exceptions.ReadException;
 import exceptions.UpdateException;
 import java.util.List;
@@ -44,5 +45,5 @@ public interface ProductsBoughtManagerEJBLocal {
      * @return A list of products bought by the customer.
      * @throws ReadException If an error occurs during the read process.
      */
-    public List<Product> getProductsBought(String customerId) throws ReadException;
+    public List<ProductsBought> getProductsBought(Integer customerId) throws ReadException;
 }

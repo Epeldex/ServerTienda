@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
 import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
@@ -77,7 +78,7 @@ public class Tag implements Serializable {
      * Collection of products with that tag
      */
     @XmlTransient
-    @OneToMany(fetch = EAGER, cascade = ALL, mappedBy = "tag")
+    @OneToMany(fetch = EAGER, cascade = REMOVE, mappedBy = "tag")
     private Set<Product> products;
 
     /**
