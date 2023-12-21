@@ -7,6 +7,8 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -20,7 +22,7 @@ import javax.persistence.Table;
 @Entity
 @XmlRootElement(name = "user")
 @Table(name = "user", schema = "our_shop")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(
             name = "findUserById",
@@ -54,6 +56,7 @@ import javax.persistence.Table;
 public class User implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     protected Integer id;
     private String username;
     private String password;

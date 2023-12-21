@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
 import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
@@ -108,7 +109,7 @@ public class Product implements Serializable {
     /**
      * Collection of products bought by the customer
      */
-    @OneToMany(fetch = EAGER, cascade = ALL, mappedBy = "product")
+    @OneToMany(fetch = EAGER, cascade = REMOVE, mappedBy = "product")
     private Set<ProductsBought> productsBought;
     /**
      * Timestamp indicating when the product was created.

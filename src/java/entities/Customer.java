@@ -2,6 +2,7 @@ package entities;
 
 import java.util.Set;
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
 import static javax.persistence.FetchType.EAGER;
 import javax.persistence.NamedQueries;
@@ -58,7 +59,7 @@ public class Customer extends User {
     private Double balance;
 
     // The set of products bought by the customer
-    @OneToMany(fetch = EAGER, cascade = ALL, mappedBy = "customer")
+    @OneToMany(fetch = EAGER, cascade = REMOVE, mappedBy = "customer")
     private Set<ProductsBought> productsBought;
 
     /**

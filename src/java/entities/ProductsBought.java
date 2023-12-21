@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.NamedQueries;
@@ -50,11 +51,11 @@ public class ProductsBought implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date boughtTimestamp;
 
-    @MapsId("customerId")
+    @JoinColumn(name="customerId", updatable=false, insertable=false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Customer customer;
 
-    @MapsId("productId")
+    @JoinColumn(name="productId", updatable=false, insertable=false)
     @ManyToOne()
     private Product product;
 

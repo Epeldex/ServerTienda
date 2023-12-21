@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
 import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
@@ -75,7 +76,7 @@ public class Supplier implements Serializable {
      */
     private Integer zip;
 
-    @OneToMany(fetch = EAGER, cascade = ALL, mappedBy = "supplier")
+    @OneToMany(fetch = EAGER, cascade = REMOVE, mappedBy = "supplier")
     private Set<Product> products;
 
     /**
