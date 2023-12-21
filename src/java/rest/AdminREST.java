@@ -13,15 +13,39 @@ import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ejb.local.AdminManagerEJBLocal;
-
+/**
+ * This class provides CRUD (Create, Read, Update, Delete) operations for Admin
+ * entities using XML as the data format. It integrates with the
+ * {@link AdminManagerEJBLocal} EJB for handling business logic.
+ * 
+ * Note: Some methods have incorrect HTTP method annotations (e.g., updateLastAccess
+ * should use @PUT instead of @POST) and the correct method should be applied
+ * based on the intended functionality.
+ * 
+ * @author dani
+ */
 @Path("admins")
 public class AdminREST {
 
+    /**
+     * Logger for the class.
+     */
     private static final Logger LOGGER = Logger.getLogger("rest");
 
+    /**
+     * EJB for managing Admin entity CRUD operations.
+     */
     @EJB
     private AdminManagerEJBLocal ejb;
 
+    /**
+     * Updates the last access of an Admin by ID.
+     *
+     * @param id The ID of the Admin whose last access is to be updated.
+     * @param dateString The new last access date in string format.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @PUT
     @Path("updateLastAccess/{id}/{date}")
     public void updateLastAccess(@PathParam("id") Integer id, @PathParam("date") String dateString) {
@@ -35,6 +59,14 @@ public class AdminREST {
         }
     }
 
+    /**
+     * Signs in an Admin using XML data.
+     *
+     * @param admin The {@link Admin} object containing the admin data for sign-in.
+     * @return The signed-in {@link Admin} object.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @POST
     @Path("signin")
     @Consumes(MediaType.APPLICATION_XML)
@@ -49,6 +81,13 @@ public class AdminREST {
         }
     }
 
+    /**
+     * Creates a new Admin using XML data.
+     *
+     * @param admin The {@link Admin} object containing the admin data.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     public void createAdmin(Admin admin) {
@@ -61,6 +100,13 @@ public class AdminREST {
         }
     }
 
+    /**
+     * Updates an existing Admin using XML data.
+     *
+     * @param admin The {@link Admin} object containing the updated admin data.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_XML)
     public void updateAdmin(Admin admin) {
@@ -73,6 +119,13 @@ public class AdminREST {
         }
     }
 
+    /**
+     * Removes an Admin by ID.
+     *
+     * @param id The ID of the Admin to be removed.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
     @DELETE
     @Path("{id}")
     public void removeAdmin(@PathParam("id") Integer id) {
