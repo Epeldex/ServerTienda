@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @XmlRootElement(name = "user")
 @Table(name = "user", schema = "our_shop")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(
             name = "findUserById",
@@ -60,7 +60,8 @@ import javax.validation.constraints.NotNull;
 public class User implements Serializable {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
     protected Integer id;
     @NotNull
     private String username;
