@@ -15,6 +15,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * EJB (Enterprise JavaBeans) session bean responsible for managing products
@@ -25,6 +27,8 @@ import java.util.List;
  */
 @Stateless
 public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
+
+    private static final Logger LOGGER = Logger.getLogger("ejb");
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -102,15 +106,16 @@ public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
      * @throws ReadException If an error occurs during the read process.
      */
     @Override
-    public List<Product> getProductsBought(String customerId) throws ReadException {
+    public List<ProductsBought> getProductsBought(Integer customerId) throws ReadException {
         try {
+            LOGGER.log(Level.INFO, "Getting products bought");
             // Execute the named query to get products bought by a customer
-            Query query = entityManager.createNamedQuery("getProductsBought")
-                    .setParameter("customerId", Integer.parseInt(customerId));
-            return query.getResultList();
+            return entityManager.createNamedQuery("getProductsBought")
+                    .setParameter("customerId", customerId).getResultList();
 
         } catch (Exception e) {
-            throw new ReadException("Error getting products bought");
+            LOGGER.log(Level.SEVERE, "Error getting products bought", e);
+            throw new ReadException("Error gettv ing products bought");
         }
     }
 }

@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * The ProductsBought class represents information about products that were
@@ -33,9 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
             + "WHERE pb.customer.id = :customerId AND pb.product.id = :productId")
     ,
     @NamedQuery(name = "getProductsBought",
-            query = "SELECT pb.product.brand, pb.product.model, pb.product.weight, pb.product.description, pb.product.price, pb.product.otherInfo "
-            + "FROM ProductsBought pb "
-            + "WHERE pb.customer.id = :customerId")
+            query = "SELECT pb FROM ProductsBought pb WHERE pb.customer.id = :customerId")
 })
 
 public class ProductsBought implements Serializable {
@@ -102,6 +101,7 @@ public class ProductsBought implements Serializable {
         this.id = id;
     }
 
+    @XmlTransient
     public Customer getCustomer() {
         return customer;
     }
@@ -110,6 +110,7 @@ public class ProductsBought implements Serializable {
         this.customer = customer;
     }
 
+    @XmlTransient
     public Product getProduct() {
         return product;
     }

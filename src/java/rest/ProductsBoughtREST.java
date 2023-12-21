@@ -34,7 +34,7 @@ public class ProductsBoughtREST {
     /**
      * Handles the HTTP POST request for purchasing a product.
      *
-     * @param productBought 
+     * @param productBought
      */
     @POST
     @Consumes(MediaType.APPLICATION_XML)
@@ -58,12 +58,10 @@ public class ProductsBoughtREST {
      * @param amount The new quantity of the purchased product.
      */
     @PUT
-    @Path("{customerId}/{productId}/{amount}")
-    public void updateAmount(@PathParam("customerId") Integer customerId,
-            @PathParam("productId") Integer productId,
-            @PathParam("amount") Integer amount) {
+    @Consumes(MediaType.APPLICATION_XML)
+    public void updateAmount(ProductsBought productBought) {
         try {
-            productsBoughtManager.updateAmount(customerId, productId, amount);
+            productsBoughtManager.updateAmount(productBought.getAmount(), productBought.getCustomer().getId(), productBought.getProduct().getProduct_id());
         } catch (UpdateException e) {
             LOGGER.log(Level.SEVERE, "Error updating amount", e);
             throw new InternalServerErrorException(e);
@@ -82,11 +80,12 @@ public class ProductsBoughtREST {
     @GET
     @Path("{customerId}")
     @Produces(MediaType.APPLICATION_XML)
-    public List<Product> getProductsBought(@PathParam("customerId") String customerId) {
+    public List<ProductsBought> getProductsBought(@PathParam("customerId") Integer customerId) {
         try {
             return productsBoughtManager.getProductsBought(customerId);
         } catch (ReadException e) {
             LOGGER.log(Level.SEVERE, "Error getting products bought", e);
+            e.printStackTrace();
             throw new InternalServerErrorException(e);
         }
     }

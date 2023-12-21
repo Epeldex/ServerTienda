@@ -319,7 +319,6 @@ public class Product implements Serializable {
      *
      * @return the set of products bought by the customer
      */
-    @XmlTransient
     public Set<ProductsBought> getProductsBought() {
         return productsBought;
     }
