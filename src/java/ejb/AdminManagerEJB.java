@@ -19,10 +19,10 @@ import exceptions.UpdateException;
 import javax.persistence.PersistenceContext;
 
 @Stateless
-public class AdminManagerEJB implements AdminManagerEJBLocal{
+public class AdminManagerEJB implements AdminManagerEJBLocal {
 
-    private static final Logger LOGGER =
-            Logger.getLogger("ejb");
+    private static final Logger LOGGER
+            = Logger.getLogger("ejb");
     @PersistenceContext
     private EntityManager em;
 
@@ -30,12 +30,12 @@ public class AdminManagerEJB implements AdminManagerEJBLocal{
     public void updateLastAccess(Integer id, LocalDate date) throws UpdateException {
         try {
             LOGGER.info(
-            "AdminManager: Updating the last access of the admin; id=" + id + ".");
+                    "AdminManager: Updating the last access of the admin; id=" + id + ".");
             Query updateLastAccess = em.createNamedQuery("signIn");
             updateLastAccess.setParameter("id", id);
             updateLastAccess.setParameter("date", date);
 
-           updateLastAccess.executeUpdate();
+            updateLastAccess.executeUpdate();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Adminanager: Exception attempting the update:",
                     e.getMessage());
@@ -54,8 +54,8 @@ public class AdminManagerEJB implements AdminManagerEJBLocal{
             return Admin.class.cast(signIn.getSingleResult());
         } catch (Exception e) {
             LOGGER.log(
-                Level.SEVERE, "AdminManager: Exception signing in:",
-                e.getMessage());
+                    Level.SEVERE, "AdminManager: Exception signing in:",
+                    e.getMessage());
             throw new ReadException(e.getMessage());
         }
     }
@@ -68,7 +68,7 @@ public class AdminManagerEJB implements AdminManagerEJBLocal{
         } catch (Exception e) {
             // TODO: throws the exception (CreateException??)
             LOGGER.log(Level.SEVERE, "AdminManager: Exception creating admin.",
-            e.getMessage());
+                    e.getMessage());
             throw new CreateException(e.getMessage());
         }
     }
@@ -82,7 +82,7 @@ public class AdminManagerEJB implements AdminManagerEJBLocal{
                  * crypting admin password
                  */
 
-                 em.merge(admin);
+                em.merge(admin);
             }
             em.flush();
         } catch (Exception e) {
@@ -97,17 +97,18 @@ public class AdminManagerEJB implements AdminManagerEJBLocal{
         try {
             User user;
             LOGGER.info("UserManager: Finding user by login.");
-            user = new UserManagerEJB().findUserById(id);  
+            user = new UserManagerEJB().findUserById(id);
 
-            if (user.getUserType().equals(UserType.ADMIN))
+            if (user.getUserType().equals(UserType.ADMIN)) {
                 em.createNamedQuery("removeUser")
-                .setParameter("id", id)
-                .executeUpdate();
+                        .setParameter("id", id)
+                        .executeUpdate();
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
                     e.getMessage());
             throw new DeleteException(e.getMessage());
         }
     }
-    
+
 }

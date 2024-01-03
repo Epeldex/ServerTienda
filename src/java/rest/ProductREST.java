@@ -1,6 +1,7 @@
 package rest;
 
 import ejb.local.ProductManagerEJBLocal;
+import ejb.local.ProductsBoughtManagerEJBLocal;
 import entities.Product;
 import exceptions.CreateException;
 import exceptions.DeleteException;
@@ -34,21 +35,24 @@ public class ProductREST {
      * EJB for managing Product entity CRUD operations.
      */
     @EJB
-    private ProductManagerEJBLocal ejb;
+    private ProductManagerEJBLocal productEjb;
+
+    @EJB
+    private ProductsBoughtManagerEJBLocal productsBoughtEjb;
 
     /**
      * Creates a new Product using XML data.
      *
      * @param product The {@link Product} object containing the product data.
      * @throws InternalServerErrorException If there is any Exception during
-     * processing.
+     *                                      processing.
      */
     @POST
     @Consumes(MediaType.APPLICATION_XML)
     public void create(Product product) {
         try {
             LOGGER.log(Level.INFO, "ProductRESTful service: create {0}.", product);
-            ejb.insertProduct(product);
+            productEjb.insertProduct(product);
         } catch (CreateException ex) {
             LOGGER.log(Level.SEVERE, "ProductRESTful service: Exception creating product, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -59,16 +63,16 @@ public class ProductREST {
      * Updates an existing Product using XML data.
      *
      * @param product The {@link Product} object containing the updated product
-     * data.
+     *                data.
      * @throws InternalServerErrorException If there is any Exception during
-     * processing.
+     *                                      processing.
      */
     @PUT
     @Consumes(MediaType.APPLICATION_XML)
     public void update(Product product) {
         try {
             LOGGER.log(Level.INFO, "ProductRESTful service: update {0}.", product);
-            ejb.updateProduct(product);
+            productEjb.updateProduct(product);
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "ProductRESTful service: Exception updating product, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -80,14 +84,15 @@ public class ProductREST {
      *
      * @param id The ID of the Product to be deleted.
      * @throws InternalServerErrorException If there is any Exception during
-     * processing.
+     *                                      processing.
      */
     @DELETE
     @Path("{id}")
     public void delete(@PathParam("id") Integer id) {
         try {
             LOGGER.log(Level.INFO, "ProductRESTful service: delete Product by id={0}.", id);
-            ejb.deleteProduct(id);
+            productsBoughtEjb.deleteByProductId(id);
+            productEjb.deleteProduct(id);
         } catch (DeleteException ex) {
             LOGGER.log(Level.SEVERE, "ProductRESTful service: Exception deleting product by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -100,7 +105,7 @@ public class ProductREST {
      * @param id The ID of the Product to be retrieved.
      * @return The retrieved {@link Product} object.
      * @throws InternalServerErrorException If there is any Exception during
-     * processing.
+     *                                      processing.
      */
     @GET
     @Path("{id}")
@@ -109,7 +114,7 @@ public class ProductREST {
         Product product = null;
         try {
             LOGGER.log(Level.INFO, "ProductRESTful service: find Product by id={0}.", id);
-            product = ejb.selectProductById(id);
+            product = productEjb.selectProductById(id);
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "ProductRESTful service: Exception reading product by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -122,7 +127,7 @@ public class ProductREST {
      *
      * @return A List of {@link Product} objects representing all products.
      * @throws InternalServerErrorException If there is any Exception during
-     * processing.
+     *                                      processing.
      */
     @GET
     @Produces(MediaType.APPLICATION_XML)
@@ -130,7 +135,7 @@ public class ProductREST {
         List<Product> products = null;
         try {
             LOGGER.log(Level.INFO, "ProductRESTful service: find all products.");
-            products = ejb.selectAllProducts();
+            products = productEjb.selectAllProducts();
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "ProductRESTful service: Exception reading all products, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);

@@ -6,6 +6,7 @@ import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
+import javax.ejb.Local;
 
 /**
  * Local interface for an EJB (Enterprise JavaBeans) session bean responsible
@@ -15,6 +16,7 @@ import exceptions.UpdateException;
  *
  * @author 2dam
  */
+@Local
 public interface CustomerManagerEJBLocal {
 
     /**
@@ -32,7 +34,7 @@ public interface CustomerManagerEJBLocal {
      * @param id The ID of the user to be deleted.
      * @throws DeleteException If an error occurs during the delete process.
      */
-    public void deleteUserById(String id) throws DeleteException;
+    public void deleteCustomerById(Integer id) throws DeleteException;
 
     /**
      * Inserts a new user (customer) into the system.

@@ -3,10 +3,7 @@ package entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
-import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -76,7 +73,7 @@ public class Supplier implements Serializable {
      */
     private Integer zip;
 
-    @OneToMany(fetch = EAGER, cascade = REMOVE, mappedBy = "supplier")
+    @OneToMany(mappedBy = "supplier")
     private Set<Product> products;
 
     /**

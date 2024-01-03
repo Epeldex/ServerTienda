@@ -1,19 +1,17 @@
 package rest;
 
 import ejb.local.CustomerManagerEJBLocal;
+import ejb.local.ProductsBoughtManagerEJBLocal;
+import ejb.local.UserManagerEJBLocal;
 import entities.Customer;
-import entities.User;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +30,13 @@ public class CustomerREST {
     private static final Logger LOGGER = Logger.getLogger("ejb");
 
     @EJB
-    private CustomerManagerEJBLocal customerManagerEJB;
+    private CustomerManagerEJBLocal customerEjb;
+
+    @EJB
+    private UserManagerEJBLocal userEjb;
+
+    @EJB
+    private ProductsBoughtManagerEJBLocal productBoughtEjb;
 
     /**
      * Handles the HTTP PUT request for updating customer information.
@@ -45,7 +49,7 @@ public class CustomerREST {
     public void updatePersonalInfo(Customer customer) {
         try {
             LOGGER.info("CustomerRESTful service: Updating customer information.");
-            customerManagerEJB.updatePersonalInfoById(customer);
+            customerEjb.updatePersonalInfoById(customer);
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception updating customer information.", ex);
             throw new InternalServerErrorException(ex);
@@ -60,10 +64,12 @@ public class CustomerREST {
      */
     @DELETE
     @Path("{id}")
-    public void deleteUser(@PathParam("id") String id) {
+    public void deleteCustomer(@PathParam("id") Integer id) {
         try {
             LOGGER.info("CustomerRESTful service: Deleting customer by id=" + id);
-            customerManagerEJB.deleteUserById(id);
+            productBoughtEjb.deleteByCustomerId(id);
+            customerEjb.deleteCustomerById(id);
+            userEjb.removeUser(id);
         } catch (DeleteException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception deleting customer.", ex);
             throw new InternalServerErrorException(ex);
@@ -78,10 +84,10 @@ public class CustomerREST {
      */
     @POST
     @Consumes(MediaType.APPLICATION_XML)
-    public void insertUser(Customer customer) {
+    public void insertCustomer(Customer customer) {
         try {
             LOGGER.info("CustomerRESTful service: Inserting user.");
-            customerManagerEJB.insertUser(customer);
+            customerEjb.insertUser(customer);
         } catch (CreateException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception inserting user.", ex);
             throw new InternalServerErrorException(ex);
@@ -93,7 +99,7 @@ public class CustomerREST {
      *
      * @param userId The ID of the customer to retrieve.
      * @return Response containing the retrieved Customer object or an error
-     * message.
+     *         message.
      */
     @GET
     @Path("{userId}")
@@ -101,7 +107,7 @@ public class CustomerREST {
     public Customer getCustomer(@PathParam("userId") Integer userId) {
         try {
             LOGGER.info("CustomerRESTful service: Get customer by id=" + userId);
-            return customerManagerEJB.getCustomer(userId);
+            return customerEjb.getCustomer(userId);
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception getting customer.", ex);
             throw new InternalServerErrorException(ex);

@@ -3,10 +3,8 @@ package entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
-import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +18,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Represents a product entity with various attributes such as product ID,
@@ -45,7 +42,20 @@ import javax.xml.bind.annotation.XmlTransient;
             query = "SELECT p FROM Product p ORDER BY p.product_id ASC")
     ,
     @NamedQuery(name = "selectProductById",
-            query = "SELECT p FROM Product p WHERE p.product_id = :product_id")})
+            query = "SELECT p FROM Product p WHERE p.product_id = :product_id")
+    , 
+    @NamedQuery(name = "selectProductWithTagId",
+            query = "SELECT p.id FROM Product p WHERE p.tag.id = :tag_id")
+    ,
+    @NamedQuery(name = "selectProductWithSupplierId",
+            query = "SELECT p.id FROM Product p WHERE p.supplier.id = :supplier_id")
+    ,
+    @NamedQuery(name = "deleteProductByTagId",
+            query = "DELETE FROM Product p WHERE p.tag.id = :tag_id")
+    , 
+    @NamedQuery(name = "deleteProductBySupplierId",
+            query = "DELETE FROM Product p WHERE p.supplier.id = :supplier_id")
+})
 public class Product implements Serializable {
 
     /**
@@ -95,7 +105,7 @@ public class Product implements Serializable {
      * Supplier of the Product
      */
     @MapsId("supplier_id")
-    @ManyToOne
+    @ManyToOne(cascade = REMOVE)
     private Supplier supplier;
 
     /**
@@ -109,7 +119,7 @@ public class Product implements Serializable {
     /**
      * Collection of products bought by the customer
      */
-    @OneToMany(fetch = EAGER, cascade = REMOVE, mappedBy = "product")
+    @OneToMany(mappedBy = "product")
     private Set<ProductsBought> productsBought;
     /**
      * Timestamp indicating when the product was created.

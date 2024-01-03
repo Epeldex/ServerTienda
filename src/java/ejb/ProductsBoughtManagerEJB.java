@@ -5,6 +5,7 @@ import entities.Customer;
 import entities.Product;
 import entities.ProductsBought;
 import entities.ProductsBoughtId;
+import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
 import java.util.ArrayList;
@@ -19,52 +20,56 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * EJB (Enterprise JavaBeans) session bean responsible for managing products
- * bought by customers. This bean provides methods for purchasing products,
- * updating product amounts, and retrieving products bought by a customer.
+ * EJB class for managing products bought by customers. This class implements
+ * the local interface ProductsBoughtManagerEJBLocal. It handles purchasing
+ * products, updating product amounts, and retrieving products bought by a
+ * customer.
  *
  * @author Alex Irusta
  */
 @Stateless
 public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
 
-    private static final Logger LOGGER = Logger.getLogger("ejb");
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    /**
+     * Logger for the class.
+     */
+    private static final Logger LOGGER = Logger.getLogger("our_shop");
 
     /**
-     * Purchases a product for a customer by creating a new ProductsBought
-     * entity and updating the customer's balance.
+     * Entity manager object for handling persistence operations.
+     */
+    @PersistenceContext
+    private EntityManager em;
+
+    /**
+     * Purchases a product for a customer by updating the product amount and
+     * associated customer's balance.
      *
      * @param product The product to be purchased.
      * @param amount The quantity of the product to be purchased.
-     * @param customerId The ID of the customer making the purchase.
+     * @param customer_id The ID of the customer making the purchase.
      * @throws UpdateException If an error occurs during the update process.
      */
     @Override
-    public void purchaseProduct(Product product, Integer amount, Integer customerId) throws UpdateException {
+    public void purchaseProduct(Product product, Integer amount, Integer customer_id) throws UpdateException {
+        LOGGER.info("ProductsBoughtManager: Purchasing product.");
         try {
-            // Find the associated Customer
-            Customer customer = (Customer) entityManager.createNamedQuery("getCustomer")
-                    .setParameter("id", customerId).getSingleResult();
+            em.createNamedQuery("purchaseProduct")
+                    .setParameter("price", product.getPrice() * amount)
+                    .setParameter("customerId", customer_id)
+                    .executeUpdate();
 
-            // Create a new ProductsBought instance with the composite key
-            ProductsBought productsBought = new ProductsBought();
-            productsBought.setAmount(amount);
-            productsBought.setBoughtTimestamp(new Date());
+            // Update the product amount for the customer
+            em.createNamedQuery("updateAmount")
+                    .setParameter("amount", amount)
+                    .setParameter("customerId", customer_id)
+                    .setParameter("productId", product.getProduct_id())
+                    .executeUpdate();
 
-            // Persist the ProductsBought entity
-            entityManager.persist(productsBought);
-
-            // Update the customer's balance using the named query
-            Query updateQuery = entityManager.createNamedQuery("purchaseProduct")
-                    .setParameter("price", product.getPrice())
-                    .setParameter("customerId", customerId);
-            updateQuery.executeUpdate();
-
+            LOGGER.info("ProductsBoughtManager: Product purchased.");
         } catch (Exception e) {
-            throw new UpdateException("Error purchasing product");
+            LOGGER.log(Level.SEVERE, "ProductsBoughtManager: Exception purchasing product.{0}", e.getMessage());
+            throw new UpdateException(e.getMessage());
         }
     }
 
@@ -72,29 +77,23 @@ public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
      * Updates the amount of a purchased product for a customer.
      *
      * @param customerId The ID of the customer.
-     * @param productId The ID of the product.
+     * @param product_id The ID of the product.
      * @param amount The quantity to update the product amount.
      * @throws UpdateException If an error occurs during the update process.
      */
     @Override
-    public void updateAmount(Integer customerId, Integer productId, Integer amount) throws UpdateException {
+    public void updateAmount(Integer customerId, Integer product_id, Integer amount) throws UpdateException {
+        LOGGER.info("ProductsBoughtManager: Updating product amount.");
         try {
-            // Find the ProductsBought entity
-            ProductsBought productsBought = entityManager.find(ProductsBought.class, productId);
-
-            // Update the amount
-            productsBought.setAmount(productsBought.getAmount() + amount);
-
-            // No persist or merge needed
-            // Return the associated Product
-            Query updateQuery = entityManager.createNamedQuery("updateAmount")
-                    .setParameter("productId", productsBought.getId())
-                    .setParameter("amount", productsBought.getAmount())
-                    .setParameter("customerId", productsBought.getCustomer().getId());
-            updateQuery.executeUpdate();
-
+            em.createNamedQuery("updateAmount")
+                    .setParameter("amount", amount)
+                    .setParameter("customerId", customerId)
+                    .setParameter("productId", product_id)
+                    .executeUpdate();
+            LOGGER.info("ProductsBoughtManager: Product amount updated.");
         } catch (Exception e) {
-            throw new UpdateException("Error updating amount");
+            LOGGER.log(Level.SEVERE, "ProductsBoughtManager: Exception updating product amount.{0}", e.getMessage());
+            throw new UpdateException(e.getMessage());
         }
     }
 
@@ -107,15 +106,54 @@ public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
      */
     @Override
     public List<ProductsBought> getProductsBought(Integer customerId) throws ReadException {
+        LOGGER.info("ProductsBoughtManager: Retrieving products bought by customer.");
         try {
-            LOGGER.log(Level.INFO, "Getting products bought");
-            // Execute the named query to get products bought by a customer
-            return entityManager.createNamedQuery("getProductsBought")
-                    .setParameter("customerId", customerId).getResultList();
-
+            Query query = em.createNamedQuery("getProductsBought")
+                    .setParameter("customerId", customerId);
+            return query.getResultList();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error getting products bought", e);
-            throw new ReadException("Error gettv ing products bought");
+            LOGGER.log(Level.SEVERE, "ProductsBoughtManager: Exception retrieving products bought by customer.{0}", e.getMessage());
+            throw new ReadException(e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes products bought by a customer based on the specified customer ID.
+     *
+     * @param customer_id The ID of the customer to delete products for.
+     * @throws DeleteException If an error occurs during the delete process.
+     */
+    @Override
+    public void deleteByCustomerId(Integer customer_id) throws DeleteException {
+        LOGGER.info("ProductsBoughtManager: Deleting products bought by customer.");
+        try {
+            em.createNamedQuery("deleteByCustomerId")
+                    .setParameter("customer_id", customer_id)
+                    .executeUpdate();
+            LOGGER.info("ProductsBoughtManager: Products bought by customer deleted.");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "ProductsBoughtManager: Exception deleting products bought by customer.{0}", e.getMessage());
+            throw new DeleteException(e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes products bought by customers based on the specified product ID.
+     *
+     * @param product_id The ID of the product to delete.
+     * @throws DeleteException If an error occurs during the delete process.
+     */
+    @Override
+    public void deleteByProductId(Integer product_id) throws DeleteException {
+        LOGGER.info("ProductsBoughtManager: Deleting products bought by product ID.");
+        try {
+            em.createNamedQuery("deleteByProductId")
+                    .setParameter("product_id", product_id)
+                    .executeUpdate();
+            LOGGER.info("ProductsBoughtManager: Products bought by product ID deleted.");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "ProductsBoughtManager: Exception deleting products bought by product ID.{0}", e.getMessage());
+            throw new DeleteException(e.getMessage());
         }
     }
 }

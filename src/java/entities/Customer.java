@@ -1,10 +1,7 @@
 package entities;
 
 import java.util.Set;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
-import static javax.persistence.FetchType.EAGER;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -28,8 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
             + "c.postalCode = :postalCode, c.city = :city, c.phone = :phone, c.balance = :balance, "
             + "c.username = :username, c.password = :password WHERE c.id = :customerIdUser")
     ,
-    @NamedQuery(name = "deleteUserById",
-            query = "DELETE FROM User u WHERE u.id = :userId")
+    @NamedQuery(name = "deleteCustomerById",
+            query = "DELETE FROM Customer c WHERE c.id = :customerId")
     ,
     @NamedQuery(name = "getCustomer",
             query = "SELECT c FROM Customer c WHERE c.id = :userId")
@@ -59,7 +56,7 @@ public class Customer extends User {
     private Double balance;
 
     // The set of products bought by the customer
-    @OneToMany(fetch = EAGER, cascade = REMOVE, mappedBy = "customer")
+    @OneToMany(mappedBy = "customer")
     private Set<ProductsBought> productsBought;
 
     /**

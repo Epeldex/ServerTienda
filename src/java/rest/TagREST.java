@@ -1,5 +1,7 @@
 package rest;
 
+import ejb.local.ProductManagerEJBLocal;
+import ejb.local.ProductsBoughtManagerEJBLocal;
 import ejb.local.TagManagerEJBLocal;
 import entities.Tag;
 import exceptions.CreateException;
@@ -33,7 +35,13 @@ public class TagREST {
      * EJB for managing Tag entity CRUD operations.
      */
     @EJB
-    private TagManagerEJBLocal ejb;
+    private TagManagerEJBLocal tagEjb;
+    
+    @EJB
+    private ProductManagerEJBLocal productEjb;
+    
+    @EJB
+    private ProductsBoughtManagerEJBLocal productBoughtEjb;
 
     /**
      * Creates a new Tag using XML data.
@@ -47,7 +55,7 @@ public class TagREST {
     public void create(Tag tag) {
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: create {0}.", tag);
-            ejb.insertTag(tag);
+            tagEjb.insertTag(tag);
         } catch (CreateException ex) {
             LOGGER.log(Level.SEVERE, "TagRESTful service: Exception creating tag, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -66,7 +74,7 @@ public class TagREST {
     public void update(Tag tag) {
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: update {0}.", tag);
-            ejb.updateTag(tag);
+            tagEjb.updateTag(tag);
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "TagRESTful service: Exception updating tag, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -85,8 +93,12 @@ public class TagREST {
     public void delete(@PathParam("id") Integer id) {
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: delete Tag by id={0}.", id);
-            ejb.deleteTag(id);
-        } catch (DeleteException ex) {
+            //find all the products with said tag
+            for (Integer product_id : productEjb.selectProductWithTagId(id))
+                productBoughtEjb.deleteByProductId(product_id); // Delete all the products bought of that product
+            productEjb.deleteProductByTagId(id); // Delete the products with said tag
+            tagEjb.deleteTag(id); // Delete the tag itself 
+        } catch (DeleteException | ReadException ex) {
             LOGGER.log(Level.SEVERE, "TagRESTful service: Exception deleting tag by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
@@ -107,7 +119,7 @@ public class TagREST {
         Tag tag = null;
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: find Tag by id={0}.", id);
-            tag = ejb.selectTagById(id);
+            tag = tagEjb.selectTagById(id);
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "TagRESTful service: Exception reading tag by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -128,7 +140,7 @@ public class TagREST {
         List<Tag> tags = null;
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: find all tags.");
-            tags = ejb.selectAllTags();
+            tags = tagEjb.selectAllTags();
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "TagRESTful service: Exception reading all tags, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);

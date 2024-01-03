@@ -3,9 +3,11 @@ package ejb.local;
 import entities.Customer;
 import entities.Product;
 import entities.ProductsBought;
+import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
 import java.util.List;
+import javax.ejb.Local;
 
 /**
  * Local interface for an EJB (Enterprise JavaBeans) session bean responsible
@@ -15,6 +17,7 @@ import java.util.List;
  *
  * @author Alex Irusta
  */
+@Local
 public interface ProductsBoughtManagerEJBLocal {
 
     /**
@@ -46,4 +49,21 @@ public interface ProductsBoughtManagerEJBLocal {
      * @throws ReadException If an error occurs during the read process.
      */
     public List<ProductsBought> getProductsBought(Integer customerId) throws ReadException;
+
+    /**
+     * Deletes products bought by a customer based on the specified customer ID.
+     *
+     * @param customer_id The ID of the customer to delete products for.
+     * @throws DeleteException If an error occurs during the delete process.
+     */
+    public void deleteByCustomerId(Integer customer_id) throws DeleteException;
+
+    /**
+     * Deletes products bought by customers based on the specified product ID.
+     *
+     * @param product_id The ID of the product to delete.
+     * @throws DeleteException If an error occurs during the delete process.
+     */
+    public void deleteByProductId(Integer product_id) throws DeleteException;
+
 }

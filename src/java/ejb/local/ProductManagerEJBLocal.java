@@ -60,4 +60,42 @@ public interface ProductManagerEJBLocal {
      */
     public void insertProduct(Product product) throws CreateException;
 
+    /**
+     * Retrieves a list of product IDs associated with a specific tag from the
+     * application data storage.
+     *
+     * @param tagId The ID of the tag.
+     * @return A List of product IDs.
+     * @throws ReadException If there is any exception during processing.
+     */
+    public List<Integer> selectProductWithTagId(Integer tagId) throws ReadException;
+
+    /**
+     * Retrieves a list of product IDs associated with a specific supplier from
+     * the application data storage.
+     *
+     * @param supplierId The ID of the supplier.
+     * @return A List of product IDs.
+     * @throws ReadException If there is any exception during processing.
+     */
+    public List<Integer> selectProductWithSupplierId(Integer supplierId) throws ReadException;
+
+    /**
+     * Deletes products associated with a specific tag from the underlying
+     * application storage.
+     *
+     * @param tagId The ID of the tag.
+     * @throws DeleteException If there is any exception during processing.
+     */
+    public void deleteProductByTagId(Integer tagId) throws DeleteException;
+
+    /**
+     * Deletes products associated with a specific supplier from the underlying
+     * application storage.
+     *
+     * @param supplierId The ID of the supplier.
+     * @throws DeleteException If there is any exception during processing.
+     */
+    public void deleteProductBySupplierId(Integer supplierId) throws DeleteException;
+
 }

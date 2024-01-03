@@ -15,16 +15,15 @@ import java.util.logging.Logger;
 import ejb.local.UserManagerEJBLocal;
 
 // ... (Previous imports and class-level comments)
-
 /**
  * This class provides CRUD (Create, Read, Update, Delete) operations for User
  * entities using XML as the data format. It integrates with the
  * {@link UserManagerEJBLocal} EJB for handling business logic.
- * 
- * Note: Some methods have incorrect HTTP method annotations (e.g., findUserByActive
- * should use @GET instead of @POST) and the correct method should be applied
- * based on the intended functionality.
- * 
+ *
+ * Note: Some methods have incorrect HTTP method annotations (e.g.,
+ * findUserByActive should use @GET instead of @POST) and the correct method
+ * should be applied based on the intended functionality.
+ *
  * @author dani
  */
 @Path("users")
@@ -110,15 +109,13 @@ public class UserREST {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_XML)
     public User findUserById(@PathParam("id") Integer id) {
-        User user = null;
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find User by id={0}.", id);
-            user = ejb.findUserById(id);
+            return ejb.findUserById(id);
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading user by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
-        return user;
     }
 
     /**
@@ -131,15 +128,14 @@ public class UserREST {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public List<User> findAllUsers() {
-        List<User> users = null;
+
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find all users.");
-            users = ejb.findAllUsers();
+            return ejb.findAllUsers();
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading all users, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
-        return users;
     }
 
     /**
@@ -154,15 +150,13 @@ public class UserREST {
     @Path("username/{username}")
     @Produces(MediaType.APPLICATION_XML)
     public User findUserByUsername(@PathParam("username") String username) {
-        User user = null;
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find User by username={0}.", username);
-            user = ejb.findUserByUsername(username);
+            return ejb.findUserByUsername(username);
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading user by username, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
-        return user;
     }
 
     /**
@@ -178,16 +172,14 @@ public class UserREST {
     @Path("active/{active}")
     @Produces(MediaType.APPLICATION_XML)
     public List<User> findUserByActive(@PathParam("active") Boolean active) {
-        List<User> users = null;
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find users by active status {0}.", active);
-            users = ejb.findUserByActive(active);
+            return ejb.findUserByActive(active);
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading users by active status, {0}",
                     ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
-        return users;
     }
 
     /**
@@ -212,25 +204,23 @@ public class UserREST {
         }
     }
 
-    /**
-     * Updates the password of a User by ID.
-     *
-     * @param id The ID of the User whose password is to be updated.
-     * @param password The new password.
-     * @throws InternalServerErrorException If there is any Exception during
-     * processing.
-     */
-    @PUT
-    @Consumes(MediaType.APPLICATION_XML)
-    @Path("updatepassword")
-    public void updatePassword(@PathParam("user") User user) {
-        try {
-            LOGGER.info("UserRESTful service: Updating user password.");
-            ejb.updatePassword(user.getId(), user.getPassword());
-        } catch (UpdateException ex) {
-            LOGGER.log(Level.SEVERE, "UserRESTful service: Exception updating user password, {0}", ex.getMessage());
-            throw new InternalServerErrorException(ex);
-        }
-    }
+//   
+//      Updates the password of a User by ID.
+//     
+//      @param id The ID of the User whose password is to be updated.
+//     @param password The new password.
+//      @throws InternalServerErrorException If there is any Exception during
+//      processing.
+//     
+//    @PUT
+//    @Consumes(MediaType.APPLICATION_XML)
+//    public void updatePassword(User user) {
+//        try {
+//            LOGGER.info("UserRESTful service: Updating user password.");
+//            ejb.updatePassword(user.getId(), user.getPassword());
+//        } catch (UpdateException ex) {
+//            LOGGER.log(Level.SEVERE, "UserRESTful service: Exception updating user password, {0}", ex.getMessage());
+//            throw new InternalServerErrorException(ex);
+//        }
+//    }
 }
-

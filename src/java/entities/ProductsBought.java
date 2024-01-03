@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -36,6 +35,13 @@ import javax.xml.bind.annotation.XmlTransient;
     ,
     @NamedQuery(name = "getProductsBought",
             query = "SELECT pb FROM ProductsBought pb WHERE pb.customer.id = :customerId")
+    ,     
+    @NamedQuery(name = "deleteByProductId",
+            query = "DELETE FROM ProductsBought pb WHERE pb.product.id = :product_id")
+    ,
+    @NamedQuery(name = "deleteByCustomerId",
+            query = "DELETE FROM ProductsBought pb WHERE pb.customer.id = :customer_id")
+
 })
 
 public class ProductsBought implements Serializable {
@@ -50,11 +56,11 @@ public class ProductsBought implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date boughtTimestamp;
 
-    @JoinColumn(name="customerId", updatable=false, insertable=false)
+    @JoinColumn(name = "customerId", updatable = false, insertable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Customer customer;
 
-    @JoinColumn(name="productId", updatable=false, insertable=false)
+    @JoinColumn(name = "productId", updatable = false, insertable = false)
     @ManyToOne()
     private Product product;
 

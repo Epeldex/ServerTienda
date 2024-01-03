@@ -65,13 +65,13 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
      * @throws DeleteException If an error occurs during the delete process.
      */
     @Override
-    public void deleteUserById(String id) throws DeleteException {
+    public void deleteCustomerById(Integer id) throws DeleteException {
         try {
             LOGGER.info("CustomerManager: Deleting customer.");
 
             // Create and execute a named query to delete a user by ID.
-            Query query = entityManager.createNamedQuery("deleteUserById");
-            query.setParameter("userId", id);
+            Query query = entityManager.createNamedQuery("deleteCustomerById");
+            query.setParameter("customerId", id);
 
             // Get the number of deleted rows after executing the query.
             int deletedRows = query.executeUpdate();

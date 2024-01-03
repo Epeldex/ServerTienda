@@ -1,6 +1,9 @@
 package rest;
 
+import ejb.local.ProductManagerEJBLocal;
+import ejb.local.ProductsBoughtManagerEJBLocal;
 import ejb.local.SupplierManagerEJBLocal;
+import ejb.local.TagManagerEJBLocal;
 import entities.Supplier;
 import exceptions.CreateException;
 import exceptions.DeleteException;
@@ -33,7 +36,13 @@ public class SupplierREST {
      * EJB for managing Supplier entity CRUD operations.
      */
     @EJB
-    private SupplierManagerEJBLocal ejb;
+    private SupplierManagerEJBLocal supplierEjb;
+
+    @EJB
+    private ProductManagerEJBLocal productEjb;
+
+    @EJB
+    private ProductsBoughtManagerEJBLocal productBoughtEjb;
 
     /**
      * Creates a new Supplier using XML data.
@@ -47,7 +56,7 @@ public class SupplierREST {
     public void create(Supplier supplier) {
         try {
             LOGGER.log(Level.INFO, "SupplierRESTful service: create {0}.", supplier);
-            ejb.insertSupplier(supplier);
+            supplierEjb.insertSupplier(supplier);
         } catch (CreateException ex) {
             LOGGER.log(Level.SEVERE, "SupplierRESTful service: Exception creating supplier, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -67,7 +76,7 @@ public class SupplierREST {
     public void update(Supplier supplier) {
         try {
             LOGGER.log(Level.INFO, "SupplierRESTful service: update {0}.", supplier);
-            ejb.updateSupplier(supplier);
+            supplierEjb.updateSupplier(supplier);
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "SupplierRESTful service: Exception updating supplier, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -86,8 +95,13 @@ public class SupplierREST {
     public void delete(@PathParam("id") Integer id) {
         try {
             LOGGER.log(Level.INFO, "SupplierRESTful service: delete Supplier by id={0}.", id);
-            ejb.deleteSupplier(id);
-        } catch (DeleteException ex) {
+            // Find all the product of that supplier
+            for (Integer product_id : productEjb.selectProductWithSupplierId(id)) {
+                productBoughtEjb.deleteByProductId(product_id); // Delete all the products bought of that product
+            }
+            productEjb.deleteProductBySupplierId(id); // Delete the products with of said Supplier
+            supplierEjb.deleteSupplier(id);// Delete the tag itself 
+        } catch (DeleteException | ReadException ex) {
             LOGGER.log(Level.SEVERE, "SupplierRESTful service: Exception deleting supplier by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
@@ -108,7 +122,7 @@ public class SupplierREST {
         Supplier supplier = null;
         try {
             LOGGER.log(Level.INFO, "SupplierRESTful service: find Supplier by id={0}.", id);
-            supplier = ejb.selectSupplierById(id);
+            supplier = supplierEjb.selectSupplierById(id);
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "SupplierRESTful service: Exception reading supplier by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -129,7 +143,7 @@ public class SupplierREST {
         List<Supplier> suppliers = null;
         try {
             LOGGER.log(Level.INFO, "SupplierRESTful service: find all suppliers.");
-            suppliers = ejb.selectAllSuppliers();
+            suppliers = supplierEjb.selectAllSuppliers();
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "SupplierRESTful service: Exception reading all suppliers, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);

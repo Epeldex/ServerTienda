@@ -3,10 +3,7 @@ package entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
-import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -43,7 +40,6 @@ import javax.xml.bind.annotation.XmlTransient;
             query = "SELECT t FROM Tag t WHERE t.tag_id = :tagId")
 })
 
-
 public class Tag implements Serializable {
 
     /**
@@ -77,8 +73,7 @@ public class Tag implements Serializable {
     /**
      * Collection of products with that tag
      */
-    @XmlTransient
-    @OneToMany(fetch = EAGER, cascade = REMOVE, mappedBy = "tag")
+    @OneToMany(mappedBy = "tag")
     private Set<Product> products;
 
     /**
