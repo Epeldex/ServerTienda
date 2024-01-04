@@ -171,17 +171,11 @@ public class UserManagerEJB implements UserManagerEJBLocal {
     @Override
     public void updateUser(User user) throws UpdateException {
         try {
-            LOGGER.info("UserManager: Finding user by login.");
-            if (em.contains(user)) {
-                /*
-                 * crypting user password
-                 */
-
-                em.merge(user);
-            }
-            em.flush();
+            LOGGER.info("UserManager: Updating user.");
+            em.merge(user);
+            LOGGER.info("UserManager: User updated");
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
+            LOGGER.log(Level.SEVERE, "UserManager: Exception updating user:",
                     e.getMessage());
             throw new UpdateException(e.getMessage());
         }

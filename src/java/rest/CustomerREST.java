@@ -49,7 +49,7 @@ public class CustomerREST {
     public void updatePersonalInfo(Customer customer) {
         try {
             LOGGER.info("CustomerRESTful service: Updating customer information.");
-            customerEjb.updatePersonalInfoById(customer);
+            customerEjb.updateCustomer(customer);
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception updating customer information.", ex);
             throw new InternalServerErrorException(ex);
@@ -69,7 +69,6 @@ public class CustomerREST {
             LOGGER.info("CustomerRESTful service: Deleting customer by id=" + id);
             productBoughtEjb.deleteByCustomerId(id);
             customerEjb.deleteCustomerById(id);
-            userEjb.removeUser(id);
         } catch (DeleteException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception deleting customer.", ex);
             throw new InternalServerErrorException(ex);

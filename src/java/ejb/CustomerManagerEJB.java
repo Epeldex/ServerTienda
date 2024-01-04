@@ -11,7 +11,6 @@ import exceptions.UpdateException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +29,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
 
     // Entity manager for handling persistence operations.
     @PersistenceContext
-    private EntityManager entityManager;
+    private EntityManager em;
 
     /**
      * Updates the personal information of a customer identified by their user
@@ -40,17 +39,10 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
      * @throws UpdateException If an error occurs during the update process.
      */
     @Override
-    public void updatePersonalInfoById(Customer customer) throws UpdateException {
+    public void updateCustomer(Customer customer) throws UpdateException {
         try {
             LOGGER.info("CustomerManager: Updating customer.");
-
-            // Create and execute a named query to update personal information.
-            Query query = entityManager.createNamedQuery("updatePersonalInfoById");
-            query.setParameter("fullName", customer.getFullName());
-            query.setParameter("email", customer.getEmail());
-            // Set other parameters...
-            query.executeUpdate();
-
+            em.merge(customer);
             LOGGER.info("CustomerManager: Customer updated.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception updating customer.", e);
@@ -68,20 +60,10 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     public void deleteCustomerById(Integer id) throws DeleteException {
         try {
             LOGGER.info("CustomerManager: Deleting customer.");
-
             // Create and execute a named query to delete a user by ID.
-            Query query = entityManager.createNamedQuery("deleteCustomerById");
-            query.setParameter("customerId", id);
+            em.createNamedQuery("deleteCustomerById").setParameter("customerId", id).executeUpdate();
 
-            // Get the number of deleted rows after executing the query.
-            int deletedRows = query.executeUpdate();
-
-            // Log a warning if the customer was not found for deletion.
-            if (deletedRows == 0) {
-                LOGGER.warning("CustomerManager: Customer not found for deletion.");
-            } else {
-                LOGGER.info("CustomerManager: Customer deleted.");
-            }
+            LOGGER.info("CustomerManager: Customer deleted.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception deleting customer.", e);
             throw new DeleteException(e.getMessage());
@@ -98,9 +80,8 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     public void insertUser(User user) throws CreateException {
         try {
             LOGGER.info("CustomerManager: Inserting user.");
-
             // Persist the user entity using the entity manager.
-            entityManager.persist(user);
+            em.persist(user);
 
             LOGGER.info("CustomerManager: User inserted.");
         } catch (Exception e) {
@@ -120,14 +101,25 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     @Override
     public Customer getCustomer(Integer userId) throws ReadException {
         try {
+            LOGGER.info("CustomerManager: Getting customer, ID " + userId);
             // Execute a named query to get a customer by user ID.
-            Query query = entityManager.createNamedQuery("getCustomer")
-                    .setParameter("userId", userId);
-
-            // Return the single result as a Customer object.
-            return (Customer) query.getSingleResult();
+            return (Customer) em.createNamedQuery("getCustomer").setParameter("userId", userId).getSingleResult();
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "CustomerManager: Exception getting Customer. ", e);
             throw new ReadException("Error getting customer");
+        }
+    }
+
+    @Override
+    public void updateBalance(Double balance, Integer customerId) throws UpdateException {
+        try {
+            LOGGER.info("CustomerManager: Updating balance of Customer " + customerId);
+            em.createNamedQuery("purchaseProduct").setParameter("balance", balance)
+                    .setParameter("customerId", customerId)
+                    .executeUpdate();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "CustomerManager: Exception updating Customer balance. ", e);
+            throw new UpdateException(e.getMessage());
         }
     }
 }

@@ -26,7 +26,7 @@ public interface CustomerManagerEJBLocal {
      * @param customer The Customer object containing updated information.
      * @throws UpdateException If an error occurs during the update process.
      */
-    public void updatePersonalInfoById(Customer customer) throws UpdateException;
+    public void updateCustomer(Customer customer) throws UpdateException;
 
     /**
      * Deletes a user (customer) identified by their ID.
@@ -53,4 +53,6 @@ public interface CustomerManagerEJBLocal {
      * @throws ReadException If an error occurs during the read process.
      */
     public Customer getCustomer(Integer userId) throws ReadException;
+
+    public void updateBalance(Double balance, Integer customerId) throws UpdateException;
 }

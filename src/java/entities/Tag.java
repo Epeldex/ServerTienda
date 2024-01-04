@@ -3,7 +3,10 @@ package entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import static javax.persistence.CascadeType.ALL;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,6 +50,7 @@ public class Tag implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "tag_id")
     private Integer tag_id;
 
     /**
@@ -73,7 +77,7 @@ public class Tag implements Serializable {
     /**
      * Collection of products with that tag
      */
-    @OneToMany(mappedBy = "tag")
+    @OneToMany(mappedBy = "tag", cascade = ALL, fetch = EAGER)
     private Set<Product> products;
 
     /**

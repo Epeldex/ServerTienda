@@ -4,7 +4,6 @@ import entities.Admin;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
-import exceptions.UpdateException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -13,7 +12,6 @@ import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ejb.local.AdminManagerEJBLocal;
-import ejb.local.CustomerManagerEJBLocal;
 import ejb.local.UserManagerEJBLocal;
 
 /**
@@ -142,7 +140,6 @@ public class AdminREST {
         try {
             LOGGER.log(Level.INFO, "AdminRESTful service: Removing admin by id={0}.", id);
             adminEjb.removeAdmin(id);
-            userEjb.removeUser(id);
         } catch (DeleteException ex) {
             LOGGER.log(Level.SEVERE, "AdminRESTful service: Exception removing admin, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);

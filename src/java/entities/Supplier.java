@@ -3,7 +3,10 @@ package entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import static javax.persistence.CascadeType.ALL;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,6 +53,7 @@ public class Supplier implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "supplier_id")
     private Integer supplier_id;
 
     /**
@@ -73,7 +77,7 @@ public class Supplier implements Serializable {
      */
     private Integer zip;
 
-    @OneToMany(mappedBy = "supplier")
+    @OneToMany(mappedBy = "supplier", cascade = ALL, fetch = EAGER)
     private Set<Product> products;
 
     /**

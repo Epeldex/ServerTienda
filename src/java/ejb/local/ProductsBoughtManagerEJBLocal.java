@@ -1,7 +1,6 @@
 package ejb.local;
 
 import entities.Customer;
-import entities.Product;
 import entities.ProductsBought;
 import exceptions.DeleteException;
 import exceptions.ReadException;
@@ -24,12 +23,10 @@ public interface ProductsBoughtManagerEJBLocal {
      * Purchases a product for a customer by updating the product amount and
      * associated customer's balance.
      *
-     * @param product The product to be purchased.
-     * @param amount The quantity of the product to be purchased.
-     * @param customer_id The ID of the customer making the purchase.
+     * @param productBought The product to be purchased.
      * @throws UpdateException If an error occurs during the update process.
      */
-    public void purchaseProduct(Product product, Integer amount, Integer customer_id) throws UpdateException;
+    public void purchaseProduct(ProductsBought productBought) throws UpdateException;
 
     /**
      * Updates the amount of a purchased product for a customer.

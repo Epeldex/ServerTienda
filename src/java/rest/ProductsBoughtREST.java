@@ -1,7 +1,8 @@
 package rest;
 
+import ejb.local.CustomerManagerEJBLocal;
 import ejb.local.ProductsBoughtManagerEJBLocal;
-import entities.Product;
+import entities.Customer;
 import entities.ProductsBought;
 import exceptions.ReadException;
 import exceptions.UpdateException;
@@ -9,7 +10,6 @@ import exceptions.UpdateException;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +29,10 @@ public class ProductsBoughtREST {
     private static final Logger LOGGER = Logger.getLogger("ourshop.ejb");
 
     @EJB
-    private ProductsBoughtManagerEJBLocal productsBoughtManager;
+    private ProductsBoughtManagerEJBLocal productsBoughtEjb;
+
+    @EJB
+    private CustomerManagerEJBLocal customerEjb;
 
     /**
      * Handles the HTTP POST request for purchasing a product.
@@ -38,11 +41,13 @@ public class ProductsBoughtREST {
      */
     @POST
     @Consumes(MediaType.APPLICATION_XML)
-    public void purchaseProduct(ProductsBought productBought) {
+    public void purchaseProduct(Customer customer) {
         try {
-            productsBoughtManager.purchaseProduct(productBought.getProduct(),
-                    productBought.getAmount(),
-                    productBought.getCustomer().getId());
+            LOGGER.info("Purchasing product");
+            customerEjb.updateBalance(customer.getBalance(), customer.getId());
+            for (ProductsBought pb : customer.getProductsBought()) {
+                productsBoughtEjb.purchaseProduct(pb);
+            }
         } catch (UpdateException e) {
             LOGGER.log(Level.SEVERE, "Error purchasing product", e);
             throw new InternalServerErrorException(e);
@@ -61,7 +66,7 @@ public class ProductsBoughtREST {
     @Consumes(MediaType.APPLICATION_XML)
     public void updateAmount(ProductsBought productBought) {
         try {
-            productsBoughtManager.updateAmount(productBought.getAmount(), productBought.getCustomer().getId(), productBought.getProduct().getProduct_id());
+            productsBoughtEjb.updateAmount(productBought.getAmount(), productBought.getId().getCustomerId(), productBought.getId().getProductId());
         } catch (UpdateException e) {
             LOGGER.log(Level.SEVERE, "Error updating amount", e);
             throw new InternalServerErrorException(e);
@@ -82,7 +87,7 @@ public class ProductsBoughtREST {
     @Produces(MediaType.APPLICATION_XML)
     public List<ProductsBought> getProductsBought(@PathParam("customerId") Integer customerId) {
         try {
-            return productsBoughtManager.getProductsBought(customerId);
+            return productsBoughtEjb.getProductsBought(customerId);
         } catch (ReadException e) {
             LOGGER.log(Level.SEVERE, "Error getting products bought", e);
             e.printStackTrace();

@@ -1,7 +1,10 @@
 package entities;
 
 import java.util.Set;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.MERGE;
 import javax.persistence.Entity;
+import static javax.persistence.FetchType.EAGER;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -13,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * and encapsulates information about a customer, such as their full name,
  * email, address, phone number, and balance.
  *
- * @author alexIrusta
+ * @author Alex Irusta
  */
 @Entity
 @Table(name = "customer", schema = "our_shop")
@@ -30,6 +33,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     ,
     @NamedQuery(name = "getCustomer",
             query = "SELECT c FROM Customer c WHERE c.id = :userId")
+    ,
+    @NamedQuery(name = "purchaseProduct",
+            query = "UPDATE Customer c SET c.balance = :balance WHERE c.id = :customerId"),
 
 })
 public class Customer extends User {
@@ -56,7 +62,7 @@ public class Customer extends User {
     private Double balance;
 
     // The set of products bought by the customer
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = EAGER)
     private Set<ProductsBought> productsBought;
 
     /**

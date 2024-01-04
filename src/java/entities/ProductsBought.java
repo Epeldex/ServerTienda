@@ -3,6 +3,7 @@ package entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,11 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "products_bought", schema = "our_shop")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "purchaseProduct",
-            query = "UPDATE Customer c SET c.balance = c.balance - :price WHERE c.id = :customerId")
-    ,
     @NamedQuery(name = "updateAmount",
-            query = "UPDATE ProductsBought pb SET pb.amount = pb.amount + :amount "
+            query = "UPDATE ProductsBought pb SET pb.amount = :amount "
             + "WHERE pb.customer.id = :customerId AND pb.product.id = :productId")
     ,
     @NamedQuery(name = "getProductsBought",
@@ -57,11 +55,11 @@ public class ProductsBought implements Serializable {
     private Date boughtTimestamp;
 
     @JoinColumn(name = "customerId", updatable = false, insertable = false)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     private Customer customer;
 
     @JoinColumn(name = "productId", updatable = false, insertable = false)
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     private Product product;
 
     /**
@@ -117,7 +115,7 @@ public class ProductsBought implements Serializable {
         this.customer = customer;
     }
 
-    @XmlTransient
+
     public Product getProduct() {
         return product;
     }

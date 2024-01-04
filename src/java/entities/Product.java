@@ -3,13 +3,16 @@ package entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-import static javax.persistence.CascadeType.REMOVE;
+import javax.persistence.CascadeType;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.MERGE;
 import javax.persistence.Entity;
+import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -18,6 +21,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Represents a product entity with various attributes such as product ID,
@@ -104,22 +108,22 @@ public class Product implements Serializable {
     /**
      * Supplier of the Product
      */
-    @MapsId("supplier_id")
-    @ManyToOne(cascade = REMOVE)
+    @JoinColumn(name = "supplier_id")
+    @ManyToOne(cascade = {CascadeType.MERGE})
     private Supplier supplier;
 
     /**
      * Tag of the product
      *
      */
-    @MapsId("tag_id")
-    @ManyToOne
+    @JoinColumn(name = "tag_id")
+    @ManyToOne(cascade = {CascadeType.MERGE})
     private Tag tag;
 
     /**
      * Collection of products bought by the customer
      */
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = EAGER)
     private Set<ProductsBought> productsBought;
     /**
      * Timestamp indicating when the product was created.
@@ -330,6 +334,7 @@ public class Product implements Serializable {
      *
      * @return the set of products bought by the customer
      */
+    @XmlTransient
     public Set<ProductsBought> getProductsBought() {
         return productsBought;
     }

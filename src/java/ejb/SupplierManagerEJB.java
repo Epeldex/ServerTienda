@@ -44,13 +44,7 @@ public class SupplierManagerEJB implements SupplierManagerEJBLocal {
     public void updateSupplier(Supplier supplier) throws UpdateException {
         LOGGER.info("SupplierManager: Updating supplier.");
         try {
-            em.createNamedQuery("updateSupplier")
-                    .setParameter("name", supplier.getName())
-                    .setParameter("phone", supplier.getPhone())
-                    .setParameter("country", supplier.getCountry())
-                    .setParameter("zip", supplier.getZip())
-                    .setParameter("supplierId", supplier.getSupplier_id())
-                    .executeUpdate();
+            em.merge(supplier);
             LOGGER.info("SupplierManager: Supplier updated.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "SupplierManager: Exception updating supplier.{0}", e.getMessage());

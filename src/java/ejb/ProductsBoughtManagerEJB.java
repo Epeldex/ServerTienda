@@ -2,14 +2,10 @@ package ejb;
 
 import ejb.local.ProductsBoughtManagerEJBLocal;
 import entities.Customer;
-import entities.Product;
 import entities.ProductsBought;
-import entities.ProductsBoughtId;
 import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
-import java.util.ArrayList;
-import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -45,28 +41,18 @@ public class ProductsBoughtManagerEJB implements ProductsBoughtManagerEJBLocal {
      * Purchases a product for a customer by updating the product amount and
      * associated customer's balance.
      *
-     * @param product The product to be purchased.
-     * @param amount The quantity of the product to be purchased.
-     * @param customer_id The ID of the customer making the purchase.
+     * @param productBought The product to be purchased.
      * @throws UpdateException If an error occurs during the update process.
      */
     @Override
-    public void purchaseProduct(Product product, Integer amount, Integer customer_id) throws UpdateException {
+    public void purchaseProduct(ProductsBought productBought) throws UpdateException {
         LOGGER.info("ProductsBoughtManager: Purchasing product.");
         try {
-            em.createNamedQuery("purchaseProduct")
-                    .setParameter("price", product.getPrice() * amount)
-                    .setParameter("customerId", customer_id)
-                    .executeUpdate();
-
-            // Update the product amount for the customer
-            em.createNamedQuery("updateAmount")
-                    .setParameter("amount", amount)
-                    .setParameter("customerId", customer_id)
-                    .setParameter("productId", product.getProduct_id())
-                    .executeUpdate();
-
-            LOGGER.info("ProductsBoughtManager: Product purchased.");
+            if (em.find(ProductsBought.class, productBought.getId()) != null) {
+                em.merge(productBought);
+            } else {
+                em.persist(productBought);
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "ProductsBoughtManager: Exception purchasing product.{0}", e.getMessage());
             throw new UpdateException(e.getMessage());
