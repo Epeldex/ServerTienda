@@ -1,6 +1,8 @@
 package ejb;
 
 import ejb.local.AdminManagerEJBLocal;
+import encryption.EncriptionManager;
+import encryption.EncriptionManagerFactory;
 import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,12 +12,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import entities.Admin;
+import entities.Admin;
 import entities.User;
 import entities.UserType;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
+import java.util.Base64;
 import javax.persistence.PersistenceContext;
 
 @Stateless
@@ -25,6 +29,8 @@ public class AdminManagerEJB implements AdminManagerEJBLocal {
             = Logger.getLogger("ejb");
     @PersistenceContext
     private EntityManager em;
+
+    private EncriptionManager encriptionManager = EncriptionManagerFactory.getEncriptionManager();
 
     @Override
     public void updateLastAccess(Integer id, LocalDate date) throws UpdateException {
@@ -49,13 +55,13 @@ public class AdminManagerEJB implements AdminManagerEJBLocal {
             LOGGER.info("AdminManager: Administrator username=" + username + " signing in.");
             Query signIn = em.createNamedQuery("signIn");
             signIn.setParameter("username", username);
-            signIn.setParameter("password", password);
+            signIn.setParameter("password", Base64.getEncoder().encodeToString(encriptionManager.decryptMessage(password)));
 
-            return (Admin) signIn.getSingleResult();
+            return encryptPassword((Admin) signIn.getSingleResult());
         } catch (Exception e) {
             LOGGER.log(
                     Level.SEVERE, "AdminManager: Exception signing in:",
-                    e.getMessage());
+                    e);
             throw new ReadException(e.getMessage());
         }
     }
@@ -109,6 +115,12 @@ public class AdminManagerEJB implements AdminManagerEJBLocal {
                     e.getMessage());
             throw new DeleteException(e.getMessage());
         }
+    }
+
+    private Admin encryptPassword(Admin admin) throws Exception {
+        Admin a = (Admin) admin.clone();
+        a.setPassword(Base64.getEncoder().encodeToString(encriptionManager.encryptMessage(a.getPassword())));
+        return a;
     }
 
 }

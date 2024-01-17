@@ -86,7 +86,6 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
             LOGGER.info("CustomerManager: Inserting user.");
             // Persist the user entity using the entity manager.
             em.persist(customer);
-
             LOGGER.info("CustomerManager: User inserted.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception inserting user.", e);

@@ -21,6 +21,7 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import java.security.*;
+import org.apache.xml.security.utils.Base64;
 
 /**
  *
@@ -42,18 +43,20 @@ public class EncriptionManagerImplementation implements EncriptionManager {
     }
 
     private void setupAsymmetricKeys() throws InternalServerErrorException {
-        if (!new File(System.getProperty("user.home") + "\\AppData\\Local\\OurShop").exists()) 
+        if (!new File(System.getProperty("user.home") + "\\AppData\\Local\\OurShop").exists()) {
             AsymmetricKeyGenerator.generate();
-        
+        }
+
         privateKey = getPrivateKey();
         publicKey = getPublicKey();
     }
 
     private void setupSymmetricKey() throws InternalServerErrorException {
         try {
-            if (symmetricKey == null) 
+            if (symmetricKey == null) {
                 symmetricKey = generateAESKey();
-            
+            }
+
         } catch (Exception e) {
             throw new InternalServerErrorException(e);
         }
@@ -97,10 +100,9 @@ public class EncriptionManagerImplementation implements EncriptionManager {
     @Override
     public byte[] encryptMessage(String message) throws InternalServerErrorException {
         try {
-            byte[] iv = generateIV();
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding"); // No Bouncy Castle provider
-            cipher.init(Cipher.ENCRYPT_MODE, symmetricKey, new IvParameterSpec(iv));
-            return cipher.doFinal(message.getBytes());
+            Cipher cipher = Cipher.getInstance("AES"); // No Bouncy Castle provider
+            cipher.init(Cipher.ENCRYPT_MODE, symmetricKey);
+            return cipher.doFinal(Base64.decode(message));
         } catch (Exception e) {
             throw new InternalServerErrorException(e);
         }
@@ -110,10 +112,9 @@ public class EncriptionManagerImplementation implements EncriptionManager {
     public byte[] decryptMessage(String message) throws InternalServerErrorException {
         try {
             LOGGER.info("Decrypting " + message);
-            byte[] iv = generateIV();
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding"); // No Bouncy Castle provider
-            cipher.init(Cipher.DECRYPT_MODE, symmetricKey, new IvParameterSpec(iv));
-            return cipher.doFinal(message.getBytes());
+            Cipher cipher = Cipher.getInstance("AES"); // No Bouncy Castle provider
+            cipher.init(Cipher.DECRYPT_MODE, symmetricKey);
+            return cipher.doFinal(Base64.decode(message));
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error decrypting message", e.getMessage());
@@ -157,13 +158,6 @@ public class EncriptionManagerImplementation implements EncriptionManager {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(128); // You can change the key size (128, 192, or 256)
         return keyGenerator.generateKey();
-    }
-
-    private static byte[] generateIV() {
-        SecureRandom random = new SecureRandom();
-        byte[] iv = new byte[16]; // AES block size is 128 bits (16 bytes)
-        random.nextBytes(iv);
-        return iv;
     }
 
     @Override
