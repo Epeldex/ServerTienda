@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.CascadeType;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.MERGE;
 import javax.persistence.Entity;
 import static javax.persistence.FetchType.EAGER;
 import javax.persistence.GeneratedValue;

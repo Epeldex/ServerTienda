@@ -1,6 +1,8 @@
 package ejb;
 
 import ejb.local.UserManagerEJBLocal;
+import encryption.EncriptionManager;
+import encryption.EncriptionManagerFactory;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +29,8 @@ public class UserManagerEJB implements UserManagerEJBLocal {
 
     @PersistenceContext
     private EntityManager em;
+
+    private EncriptionManager encriptionManager = EncriptionManagerFactory.getEncriptionManager();
 
     /**
      * method that searches a user by id.

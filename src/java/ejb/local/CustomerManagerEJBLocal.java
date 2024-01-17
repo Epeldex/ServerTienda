@@ -39,10 +39,10 @@ public interface CustomerManagerEJBLocal {
     /**
      * Inserts a new user (customer) into the system.
      *
-     * @param user The User object representing the new user.
+     * @param customer The User object representing the new user.
      * @throws CreateException If an error occurs during the creation process.
      */
-    public void insertUser(User user) throws CreateException;
+    public void insertCustomer(Customer customer) throws CreateException;
 
     /**
      * Retrieves customer information for a user identified by their user ID.

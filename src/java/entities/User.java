@@ -17,9 +17,9 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Entity representing users. It contains fields such as user ID, username,
- * password, user type, and active status. It also provides methods for
- * getting and setting these fields, as well as overridden methods for hash
- * code, equality, and string representation.
+ * password, user type, and active status. It also provides methods for getting
+ * and setting these fields, as well as overridden methods for hash code,
+ * equality, and string representation.
  *
  * @author dani
  */
@@ -67,10 +67,9 @@ public class User implements Serializable {
     private String username;
     @NotNull
     private String password;
-    
+
     private boolean active;
 
-    
     @Enumerated(EnumType.ORDINAL)
     private UserType userType;
 
@@ -120,7 +119,6 @@ public class User implements Serializable {
     }
 
     // setters
-
     /**
      * Set the user ID.
      *
@@ -164,6 +162,16 @@ public class User implements Serializable {
      */
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public static User getInnerUser(User user) {
+        User newUser = new User();
+        newUser.setUsername(user.getUsername());
+        newUser.setPassword(user.getPassword());
+        newUser.setId(user.getId());
+        newUser.setActive(user.isActive());
+        newUser.setUserType(user.getUserType());
+        return newUser;
     }
 
     /**

@@ -86,7 +86,7 @@ public class CustomerREST {
     public void insertCustomer(Customer customer) {
         try {
             LOGGER.info("CustomerRESTful service: Inserting user.");
-            customerEjb.insertUser(customer);
+            customerEjb.insertCustomer(customer);
         } catch (CreateException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception inserting user.", ex);
             throw new InternalServerErrorException(ex);
