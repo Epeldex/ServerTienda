@@ -85,7 +85,6 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
         try {
             LOGGER.info("CustomerManager: Inserting user.");
             // Persist the user entity using the entity manager.
-            customer.setPassword(encriptionManager.hashMessage(customer.getPassword()));
             em.persist(customer);
 
             LOGGER.info("CustomerManager: User inserted.");
@@ -108,9 +107,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
         try {
             LOGGER.info("CustomerManager: Getting customer, ID " + userId);
             // Execute a named query to get a customer by user ID.
-            Customer c = (Customer) em.createNamedQuery("getCustomer").setParameter("userId", userId).getSingleResult();
-            c.setPassword(Base64.getEncoder().encodeToString(encriptionManager.encryptMessage(c.getPassword())));
-            return c;
+            return encryptPassword((Customer) em.createNamedQuery("getCustomer").setParameter("userId", userId).getSingleResult());
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception getting Customer. ", e);
             throw new ReadException("Error getting customer");
@@ -128,5 +125,11 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception updating Customer balance. ", e);
             throw new UpdateException(e.getMessage());
         }
+    }
+
+    private Customer encryptPassword(Customer customer) throws Exception {
+        Customer c = (Customer) customer.clone();
+        c.setPassword(Base64.getEncoder().encodeToString(encriptionManager.encryptMessage(c.getPassword())));
+        return c;
     }
 }

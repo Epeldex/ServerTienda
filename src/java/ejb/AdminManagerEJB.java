@@ -51,7 +51,7 @@ public class AdminManagerEJB implements AdminManagerEJBLocal {
             signIn.setParameter("username", username);
             signIn.setParameter("password", password);
 
-            return Admin.class.cast(signIn.getSingleResult());
+            return (Admin) signIn.getSingleResult();
         } catch (Exception e) {
             LOGGER.log(
                     Level.SEVERE, "AdminManager: Exception signing in:",

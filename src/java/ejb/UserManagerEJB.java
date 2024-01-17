@@ -3,6 +3,7 @@ package ejb;
 import ejb.local.UserManagerEJBLocal;
 import encryption.EncriptionManager;
 import encryption.EncriptionManagerFactory;
+import entities.User;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +17,7 @@ import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
+import java.util.Base64;
 import javax.persistence.PersistenceContext;
 
 @Stateless
@@ -26,10 +28,10 @@ public class UserManagerEJB implements UserManagerEJBLocal {
      */
     private static final Logger LOGGER
             = Logger.getLogger("ejb");
-
+    
     @PersistenceContext
     private EntityManager em;
-
+    
     private EncriptionManager encriptionManager = EncriptionManagerFactory.getEncriptionManager();
 
     /**
@@ -42,11 +44,10 @@ public class UserManagerEJB implements UserManagerEJBLocal {
         try {
             LOGGER.info(
                     "UserManager: Finding user by id=" + id + ".");
-            return User.class.cast(
-                    em.createNamedQuery("findUserById")
-                            .setParameter("id", id)
-                            .getSingleResult()
-            );
+            
+            return encryptPassword((User) em.createNamedQuery("findUserById")
+                    .setParameter("id", id)
+                    .getSingleResult());
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
                     e.getMessage());
@@ -63,10 +64,10 @@ public class UserManagerEJB implements UserManagerEJBLocal {
         try {
             LOGGER.info(
                     "UserManager: Finding user by username = " + username + ".");
-            return User.class.cast(
-                    em.createNamedQuery("findUserByUsername")
-                            .setParameter("username", username)
-                            .getSingleResult());
+            
+            return encryptPassword((User) em.createNamedQuery("findUserByUsername")
+                    .setParameter("username", username)
+                    .getSingleResult());
         } catch (Exception e) {
             LOGGER.log(
                     Level.SEVERE,
@@ -75,7 +76,7 @@ public class UserManagerEJB implements UserManagerEJBLocal {
             throw new ReadException(e.getMessage());
         }
     }
-
+    
     @Override
     public List<User> findUserByActive(Boolean active) throws ReadException {
         List<User> results;
@@ -84,7 +85,7 @@ public class UserManagerEJB implements UserManagerEJBLocal {
             results = em.createNamedQuery("findUserByActive")
                     .setParameter("active", active)
                     .getResultList();
-
+            
             return results;
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
@@ -105,16 +106,16 @@ public class UserManagerEJB implements UserManagerEJBLocal {
             results
                     = em.createNamedQuery("findAllUsers")
                             .getResultList();
-
+            
             return results;
-
+            
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
                     e.getMessage());
             throw new ReadException(e.getMessage());
         }
     }
-
+    
     @Override
     public User signIn(String username, String password) throws ReadException {
         try {
@@ -122,8 +123,8 @@ public class UserManagerEJB implements UserManagerEJBLocal {
             Query signIn = em.createNamedQuery("signIn");
             signIn.setParameter("username", username);
             signIn.setParameter("password", password);
-
-            return User.class.cast(signIn.getSingleResult());
+            
+            return encryptPassword((User) signIn.getSingleResult());
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
                     e.getMessage());
@@ -204,5 +205,11 @@ public class UserManagerEJB implements UserManagerEJBLocal {
                     e.getMessage());
             throw new DeleteException(e.getMessage());
         }
+    }
+    
+    private User encryptPassword(User user) throws Exception {
+        User u = (User) user.clone();
+        u.setPassword(Base64.getEncoder().encodeToString(encriptionManager.encryptMessage(u.getPassword())));
+        return u;
     }
 }
