@@ -122,4 +122,21 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
             throw new UpdateException(e.getMessage());
         }
     }
+
+
+    @Override
+    public Customer findCustomerByEmail(String email) throws UpdateException {
+        try {
+            LOGGER.info("Reseting user password. email= " + email);
+            return Customer.class.cast(
+                em.createNamedQuery("findCustomerByEmail")
+            .setParameter("email", email)
+                    .getSingleResult());
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "CustomerManager: Exception reseting Customer password. ", e);
+            throw new UpdateException(e.getMessage());
+        }
+    }
+
+    
 }

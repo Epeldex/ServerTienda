@@ -4,6 +4,7 @@ import ejb.local.CustomerManagerEJBLocal;
 import ejb.local.ProductsBoughtManagerEJBLocal;
 import ejb.local.UserManagerEJBLocal;
 import entities.Customer;
+import entities.User;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
@@ -109,6 +110,30 @@ public class CustomerREST {
             return customerEjb.getCustomer(userId);
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception getting customer.", ex);
+            throw new InternalServerErrorException(ex);
+        }
+    }
+
+    /**
+     * Retrieves a Customer by its email.
+     *
+     * @param email The email of the Customer to be retrieved.
+     * @return The retrieved {@link Customer} object.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
+    @GET
+    @Path("{email}")
+    @Produces(MediaType.APPLICATION_XML)
+    public void resetPasword(@PathParam("email") String email) {
+        try {
+            LOGGER.log(Level.INFO, "CustomerRESTful service: find Customer by email=" + email);
+            Customer c = customerEjb.findCustomerByEmail(email);
+            c.setPassword(
+                c.getPassword()
+            );
+        } catch (UpdateException ex) {
+            LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading user by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
     }
