@@ -37,6 +37,13 @@ public interface CustomerManagerEJBLocal {
     public void deleteCustomerById(Integer id) throws DeleteException;
 
     /**
+     * Obtains a Customer by email.
+     * @param email The email of the customer that requests it.
+     * @throws UpdateException If an error occurs during the process.
+     */
+    public Customer findCustomerByEmail(String email) throws UpdateException;
+
+    /**
      * Inserts a new user (customer) into the system.
      *
      * @param customer The User object representing the new user.

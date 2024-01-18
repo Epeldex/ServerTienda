@@ -37,6 +37,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "purchaseProduct",
             query = "UPDATE Customer c SET c.balance = :balance WHERE c.id = :customerId"),
 
+    @NamedQuery(name = "findCustomerByEmail",
+            query = "SELECT C FROM Customer c WHERE c.email = :email"),
+    
+
 })
 public class Customer extends User {
 

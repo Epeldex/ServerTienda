@@ -17,15 +17,16 @@ import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
 import javax.persistence.PersistenceContext;
-
+/**
+ * @author dani
+ */
 @Stateless
 public class UserManagerEJB implements UserManagerEJBLocal {
 
     /**
      * Logger of the class.
      */
-    private static final Logger LOGGER
-            = Logger.getLogger("ejb");
+    private static final Logger LOGGER = Logger.getLogger("ejb");
 
     @PersistenceContext
     private EntityManager em;
@@ -33,36 +34,38 @@ public class UserManagerEJB implements UserManagerEJBLocal {
     private EncriptionManager encriptionManager = EncriptionManagerFactory.getEncriptionManager();
 
     /**
-     * method that searches a user by id.
+     * Finds a user by their ID.
      *
-     * @param id searching user's id. to search with
+     * @param id The ID of the user to search for.
+     * @return The User object corresponding to the given ID.
+     * @throws ReadException If an error occurs during the read process.
      */
     @Override
     public User findUserById(Integer id) throws ReadException {
         try {
-            LOGGER.info(
-                    "UserManager: Finding user by id=" + id + ".");
+            LOGGER.info("UserManager: Finding user by id=" + id + ".");
             return User.class.cast(
                     em.createNamedQuery("findUserById")
                             .setParameter("id", id)
-                            .getSingleResult()
-            );
+                            .getSingleResult());
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
+            LOGGER.log(Level.SEVERE, "UserManager: Exception finding user by login:",
                     e.getMessage());
             throw new ReadException(e.getMessage());
         }
     }
 
     /**
+     * Finds a user by their username.
      *
-     * @param username
+     * @param username The username of the user to search for.
+     * @return The User object corresponding to the given username.
+     * @throws ReadException If an error occurs during the read process.
      */
     @Override
     public User findUserByUsername(String username) throws ReadException {
         try {
-            LOGGER.info(
-                    "UserManager: Finding user by username = " + username + ".");
+            LOGGER.info("UserManager: Finding user by username=" + username + ".");
             return User.class.cast(
                     em.createNamedQuery("findUserByUsername")
                             .setParameter("username", username)
@@ -70,12 +73,19 @@ public class UserManagerEJB implements UserManagerEJBLocal {
         } catch (Exception e) {
             LOGGER.log(
                     Level.SEVERE,
-                    "UserManager: Exception Finding user by id:",
+                    "UserManager: Exception finding user by id:",
                     e.getMessage());
             throw new ReadException(e.getMessage());
         }
     }
 
+    /**
+     * Finds users based on their active status.
+     *
+     * @param active The active status of users to search for.
+     * @return A list of User objects matching the given active status.
+     * @throws ReadException If an error occurs during the read process.
+     */
     @Override
     public List<User> findUserByActive(Boolean active) throws ReadException {
         List<User> results;
@@ -87,34 +97,43 @@ public class UserManagerEJB implements UserManagerEJBLocal {
 
             return results;
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
+            LOGGER.log(Level.SEVERE, "UserManager: Exception finding user by login:",
                     e.getMessage());
             throw new ReadException(e.getMessage());
         }
     }
 
     /**
+     * Finds all users in the system.
      *
-     *
+     * @return A list of all User objects in the system.
+     * @throws ReadException If an error occurs during the read process.
      */
     @Override
     public List<User> findAllUsers() throws ReadException {
         List<User> results;
         try {
             LOGGER.info("UserManager: Finding user by login.");
-            results
-                    = em.createNamedQuery("findAllUsers")
-                            .getResultList();
+            results = em.createNamedQuery("findAllUsers")
+                    .getResultList();
 
             return results;
 
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
+            LOGGER.log(Level.SEVERE, "UserManager: Exception finding user by login:",
                     e.getMessage());
             throw new ReadException(e.getMessage());
         }
     }
 
+    /**
+     * Authenticates a user during sign-in using their username and password.
+     *
+     * @param username The username of the user attempting to sign in.
+     * @param password The password of the user attempting to sign in.
+     * @return The authenticated User object.
+     * @throws ReadException If an error occurs during the authentication process.
+     */
     @Override
     public User signIn(String username, String password) throws ReadException {
         try {
@@ -125,16 +144,18 @@ public class UserManagerEJB implements UserManagerEJBLocal {
 
             return User.class.cast(signIn.getSingleResult());
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
+            LOGGER.log(Level.SEVERE, "UserManager: Exception finding user by login:",
                     e.getMessage());
             throw new ReadException(e.getMessage());
         }
     }
 
     /**
+     * Updates the password of a user identified by their ID.
      *
-     * @param id
-     * @param password
+     * @param id       The ID of the user.
+     * @param password The new password to set for the user.
+     * @throws UpdateException If an error occurs during the update process.
      */
     @Override
     public void updatePassword(Integer id, String password) throws UpdateException {
@@ -144,16 +165,18 @@ public class UserManagerEJB implements UserManagerEJBLocal {
                 em.createNamedQuery("updatePassword");
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
+            LOGGER.log(Level.SEVERE, "UserManager: Exception finding user by login:",
                     e.getMessage());
             throw new UpdateException(e.getMessage());
         }
     }
 
     /**
-     * method that writes a new user into the database
+     * Creates a new user in the system.
      *
-     * @param user
+     * @param user The User object representing the new user.
+     * @throws CreateException If an error occurs during the creation process.
+     *                         TODO: Review and handle exceptions more precisely.
      */
     @Override
     public void createUser(User user) throws CreateException {
@@ -161,16 +184,17 @@ public class UserManagerEJB implements UserManagerEJBLocal {
             LOGGER.info("UserManager: Finding user by login.");
             em.persist(user);
         } catch (Exception e) {
-            // TODO: throws the exception (CreateException??)
-            LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
+            LOGGER.log(Level.SEVERE, "UserManager: Exception finding user by login:",
                     e.getMessage());
             throw new CreateException(e.getMessage());
         }
     }
 
     /**
+     * Updates the information of an existing user.
      *
-     * @param user
+     * @param user The updated User object.
+     * @throws UpdateException If an error occurs during the update process.
      */
     @Override
     public void updateUser(User user) throws UpdateException {
@@ -186,9 +210,10 @@ public class UserManagerEJB implements UserManagerEJBLocal {
     }
 
     /**
-     * method that removes a user by id.
+     * Removes a user from the system based on their ID.
      *
-     * @param id
+     * @param id The ID of the user to be removed.
+     * @throws DeleteException If an error occurs during the delete process.
      */
     @Override
     public void removeUser(Integer id) throws DeleteException {
@@ -200,7 +225,7 @@ public class UserManagerEJB implements UserManagerEJBLocal {
                         .executeUpdate();
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "UserManager: Exception Finding user by login:",
+            LOGGER.log(Level.SEVERE, "UserManager: Exception finding user by login:",
                     e.getMessage());
             throw new DeleteException(e.getMessage());
         }
