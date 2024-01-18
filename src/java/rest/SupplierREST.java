@@ -3,7 +3,6 @@ package rest;
 import ejb.local.ProductManagerEJBLocal;
 import ejb.local.ProductsBoughtManagerEJBLocal;
 import ejb.local.SupplierManagerEJBLocal;
-import ejb.local.TagManagerEJBLocal;
 import entities.Supplier;
 import exceptions.CreateException;
 import exceptions.DeleteException;
@@ -30,7 +29,7 @@ public class SupplierREST {
     /**
      * Logger for the class.
      */
-    private static final Logger LOGGER = Logger.getLogger("our_shop");
+    private static final Logger LOGGER = Logger.getLogger("SupplierREST");
 
     /**
      * EJB for managing Supplier entity CRUD operations.
@@ -38,9 +37,15 @@ public class SupplierREST {
     @EJB
     private SupplierManagerEJBLocal supplierEjb;
 
+    /**
+     * EJB for managing Product entity CRUD operations.
+     */
     @EJB
     private ProductManagerEJBLocal productEjb;
 
+    /**
+     * EJB for managing ProductsBought entity CRUD operations.
+     */
     @EJB
     private ProductsBoughtManagerEJBLocal productBoughtEjb;
 

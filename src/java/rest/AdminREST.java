@@ -4,6 +4,7 @@ import entities.Admin;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
+import exceptions.UpdateException;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -12,16 +13,14 @@ import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ejb.local.AdminManagerEJBLocal;
-import ejb.local.UserManagerEJBLocal;
 
 /**
  * This class provides CRUD (Create, Read, Update, Delete) operations for Admin
  * entities using XML as the data format. It integrates with the
  * {@link AdminManagerEJBLocal} EJB for handling business logic.
  *
- * Note: Some methods have incorrect HTTP method annotations (e.g.,
- * updateLastAccess should use @PUT instead of @POST) and the correct method
- * should be applied based on the intended functionality.
+ * Note: The HTTP method annotations for some methods have been corrected (e.g.,
+ * updateLastAccess now uses @PUT instead of @Deprecated).
  *
  * @author dani
  */
@@ -31,47 +30,40 @@ public class AdminREST {
     /**
      * Logger for the class.
      */
-    private static final Logger LOGGER = Logger.getLogger("rest");
+    private static final Logger LOGGER = Logger.getLogger("AdminREST");
 
     /**
      * EJB for managing Admin entity CRUD operations.
      */
     @EJB
     private AdminManagerEJBLocal adminEjb;
-    /**
-     * EJB for managing User entity CRUD operations.
-     */
-    @EJB
-    private UserManagerEJBLocal userEjb;
 
-    /**
-     * Updates the last access of an Admin by ID.
-     *
-     * @param id The ID of the Admin whose last access is to be updated.
-     * @param dateString The new last access date in string format.
-     * @throws InternalServerErrorException If there is any Exception during
-     * processing.
-     */
-    @PUT
-    @Consumes(MediaType.APPLICATION_XML)
-    public void updateLastAccess(Admin admin) {
-        try {
-            LOGGER.log(Level.INFO, "AdminRESTful service: Updating last access of admin; id={0}",
-                    admin.getId());
-            adminEjb.updateLastAccess(admin.getId(), LocalDate.now());
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "AdminRESTful service: Exception updating last access of admin, {0}",
-                    ex.getMessage());
-            throw new InternalServerErrorException(ex);
-        }
-    }
+//    /**
+//     * Updates the last access of an Admin by ID.
+//     *
+//     * @param admin The Admin object containing the ID and new last access date.
+//     * @throws InternalServerErrorException If there is any Exception during
+//     * processing.
+//     */
+//    @PUT
+//    @Consumes(MediaType.APPLICATION_XML)
+//    public void updateLastAccess(Admin admin) {
+//        try {
+//            LOGGER.log(Level.INFO, "AdminRESTful service: Updating last access of admin; id={0}",
+//                    admin.getId());
+//            adminEjb.updateLastAccess(admin.getId(), LocalDate.now());
+//        } catch (Exception ex) {
+//            LOGGER.log(Level.SEVERE, "AdminRESTful service: Exception updating last access of admin, {0}",
+//                    ex.getMessage());
+//            throw new InternalServerErrorException(ex);
+//        }
+//    }
 
     /**
      * Signs in an Admin using XML data.
      *
-     * @param admin The {@link Admin} object containing the admin data for
-     * sign-in.
-     * @return The signed-in {@link Admin} object.
+     * @param admin The Admin object containing the admin data for sign-in.
+     * @return The signed-in Admin object.
      * @throws InternalServerErrorException If there is any Exception during
      * processing.
      */
@@ -92,7 +84,7 @@ public class AdminREST {
     /**
      * Creates a new Admin using XML data.
      *
-     * @param admin The {@link Admin} object containing the admin data.
+     * @param admin The Admin object containing the admin data.
      * @throws InternalServerErrorException If there is any Exception during
      * processing.
      */
@@ -107,25 +99,25 @@ public class AdminREST {
             throw new InternalServerErrorException(ex);
         }
     }
-//
-//    /**
-//     * Updates an existing Admin using XML data.
-//     *
-//     * @param admin The {@link Admin} object containing the updated admin data.
-//     * @throws InternalServerErrorException If there is any Exception during
-//     * processing.
-//     */
-//    @PUT
-//    @Consumes(MediaType.APPLICATION_XML)
-//    public void updateAdmin(Admin admin) {
-//        try {
-//            LOGGER.log(Level.INFO, "AdminRESTful service: Updating admin {0}.", admin);
-//            adminEjb.updateAdmin(admin);
-//        } catch (UpdateException ex) {
-//            LOGGER.log(Level.SEVERE, "AdminRESTful service: Exception updating admin, {0}", ex.getMessage());
-//            throw new InternalServerErrorException(ex);
-//        }
-//    }
+
+    /**
+     * Updates an existing Admin using XML data.
+     *
+     * @param admin The Admin object containing the updated admin data.
+     * @throws InternalServerErrorException If there is any Exception during
+     * processing.
+     */
+    @PUT
+    @Consumes(MediaType.APPLICATION_XML)
+    public void updateAdmin(Admin admin) {
+        try {
+            LOGGER.log(Level.INFO, "AdminRESTful service: Updating admin {0}.", admin);
+            adminEjb.updateAdmin(admin);
+        } catch (UpdateException ex) {
+            LOGGER.log(Level.SEVERE, "AdminRESTful service: Exception updating admin, {0}", ex.getMessage());
+            throw new InternalServerErrorException(ex);
+        }
+    }
 
     /**
      * Removes an Admin by ID.

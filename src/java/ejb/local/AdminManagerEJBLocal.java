@@ -1,7 +1,6 @@
 package ejb.local;
 
 import java.time.LocalDate;
-
 import entities.Admin;
 import exceptions.CreateException;
 import exceptions.DeleteException;
@@ -13,46 +12,54 @@ import javax.ejb.Local;
 public interface AdminManagerEJBLocal {
 
     /**
-     * Modifies the last access of a specific {@link Admin}.
+     * Updates the last access date of a specific {@link Admin}.
      *
-     * @param id Id of the {@link Admin} whose password is to be changed.
-     * @return A List of {@link Admin} objects.
-     * @param date New date of the {@link Admin}.
-     * @throws UpdateException
+     * @param id Id of the {@link Admin} whose last access date is to be
+     * updated.
+     * @param date New date for the last access of the {@link Admin}.
+     * @throws UpdateException If there is any exception during the update
+     * process.
      */
+    @Deprecated
     public void updateLastAccess(Integer id, LocalDate date) throws UpdateException;
 
     /**
-     * Checks if there's any Admin with this credentials.
+     * Signs in an admin using the provided username and password.
      *
-     * @param Adminname The {@link Admin} object's Adminname.
-     * @param password The {@link Admin} object's password
-     * @return The {@link Admin} object containing the {@link Admin} data.
-     * @throws UpdateException If there is any Exception the process.
+     * @param username The username of the {@link Admin}.
+     * @param password The password of the {@link Admin}.
+     * @return The {@link Admin} object representing the signed-in admin.
+     * @throws ReadException If there is any exception during the sign-in
+     * process.
      */
     public Admin signIn(String username, String password) throws ReadException;
 
     /**
-     * Creates an Admin and stores it in the underlying application storage.
+     * Creates a new admin and stores it in the underlying application storage.
      *
-     * @param admin The {@link Admin} object containing the admin data.
-     * @throws CreateException If there is any Exception the process.
+     * @param admin The {@link Admin} object containing the admin data to be
+     * created.
+     * @throws CreateException If there is any exception during the creation
+     * process.
      */
     public void createAdmin(Admin admin) throws CreateException;
 
     /**
      * Updates an admin's data in the underlying application storage.
      *
-     * @param admin The {@link Admin} object containing the admin data.
-     * @throws UpdateException If there is any Exception the process.
+     * @param admin The {@link Admin} object containing the updated admin data.
+     * @throws UpdateException If there is any exception during the update
+     * process.
      */
     public void updateAdmin(Admin admin) throws UpdateException;
 
     /**
-     * Deletes an Admin's data in the underlying application storage.
+     * Deletes an admin's data from the underlying application storage based on
+     * the given ID.
      *
-     * @param admin The {@link Admin} object containing the Admadminin data.
-     * @throws DeleteException If there is any Exception the process.
+     * @param id The ID of the {@link Admin} whose data is to be deleted.
+     * @throws DeleteException If there is any exception during the deletion
+     * process.
      */
     public void removeAdmin(Integer id) throws DeleteException;
 }

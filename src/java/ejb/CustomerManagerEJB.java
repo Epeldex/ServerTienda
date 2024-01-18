@@ -33,7 +33,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     @PersistenceContext
     private EntityManager em;
 
-    private EncriptionManager encriptionManager = EncriptionManagerFactory.getEncriptionManager();
+    private EncriptionManager encriptionManager = EncriptionManagerFactory.getInstance();
 
     /**
      * Updates the personal information of a customer identified by their user
@@ -46,6 +46,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     public void updateCustomer(Customer customer) throws UpdateException {
         try {
             LOGGER.info("CustomerManager: Updating customer.");
+            customer.setPassword(Base64.getEncoder().encodeToString(encriptionManager.decryptMessage(customer.getPassword())));
             em.merge(customer);
             LOGGER.info("CustomerManager: Customer updated.");
         } catch (Exception e) {
@@ -85,6 +86,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
         try {
             LOGGER.info("CustomerManager: Inserting user.");
             // Persist the user entity using the entity manager.
+            customer.setPassword(Base64.getEncoder().encodeToString(encriptionManager.decryptMessage(customer.getPassword())));
             em.persist(customer);
             LOGGER.info("CustomerManager: User inserted.");
         } catch (Exception e) {

@@ -52,7 +52,6 @@ public interface UserManagerEJBLocal {
      * Modifies the password of a specific {@link User}.
      *
      * @param id Id of the {@link User} whose password is to be changed.
-     * @return A List of {@link User} objects.
      * @param password New password of the {@link User}.
      * @throws UpdateException
      */
@@ -64,7 +63,7 @@ public interface UserManagerEJBLocal {
      * @param username The {@link User} object's username.
      * @param password The {@link User} object's password
      * @return The {@link User} object containing the {@link User} data.
-     * @throws UpdateException If there is any Exception the process.
+     * @throws ReadException If there is any Exception the process.
      */
     public User signIn(String username, String password) throws ReadException;
 
@@ -87,7 +86,7 @@ public interface UserManagerEJBLocal {
     /**
      * Deletes a user's data in the underlying application storage.
      *
-     * @param user The {@link User} object containing the user data.
+     * @param id The {@link User}'s id who has to be removed
      * @throws DeleteException If there is any Exception the process.
      */
     public void removeUser(Integer id) throws DeleteException;

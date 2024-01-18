@@ -1,7 +1,6 @@
 package ejb.local;
 
 import entities.Customer;
-import entities.User;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
@@ -11,10 +10,10 @@ import javax.ejb.Local;
 /**
  * Local interface for an EJB (Enterprise JavaBeans) session bean responsible
  * for managing customer data. This interface defines methods for updating
- * personal information, deleting a user, inserting a new user, and retrieving
- * customer information.
+ * personal information, deleting a user, inserting a new user, retrieving
+ * customer information, and updating customer balance.
  *
- * @author 2dam
+ * @author Alex Irusta
  */
 @Local
 public interface CustomerManagerEJBLocal {
@@ -23,23 +22,24 @@ public interface CustomerManagerEJBLocal {
      * Updates the personal information of a customer identified by their user
      * ID.
      *
-     * @param customer The Customer object containing updated information.
+     * @param customer The Customer object containing the updated personal
+     * information.
      * @throws UpdateException If an error occurs during the update process.
      */
     public void updateCustomer(Customer customer) throws UpdateException;
 
     /**
-     * Deletes a user (customer) identified by their ID.
+     * Deletes a Customer identified by their ID.
      *
-     * @param id The ID of the user to be deleted.
+     * @param id The ID of the customer to be deleted.
      * @throws DeleteException If an error occurs during the delete process.
      */
     public void deleteCustomerById(Integer id) throws DeleteException;
 
     /**
-     * Inserts a new user (customer) into the system.
+     * Inserts a Customer into the system.
      *
-     * @param customer The User object representing the new user.
+     * @param customer The Customer object representing the new customer.
      * @throws CreateException If an error occurs during the creation process.
      */
     public void insertCustomer(Customer customer) throws CreateException;
@@ -49,10 +49,18 @@ public interface CustomerManagerEJBLocal {
      *
      * @param userId The ID of the user for whom customer information is
      * requested.
-     * @return The Customer object containing customer information.
+     * @return The Customer object containing the requested customer
+     * information.
      * @throws ReadException If an error occurs during the read process.
      */
     public Customer getCustomer(Integer userId) throws ReadException;
 
+    /**
+     * Updates the balance of a customer identified by their ID.
+     *
+     * @param balance The new balance to be set for the customer.
+     * @param customerId The ID of the customer for whom the balance is updated.
+     * @throws UpdateException If an error occurs during the update process.
+     */
     public void updateBalance(Double balance, Integer customerId) throws UpdateException;
 }
