@@ -57,7 +57,7 @@ import javax.validation.constraints.NotNull;
             query = "DELETE FROM User u WHERE u.id = :id")
 })
 
-public class User implements Serializable {
+public class User implements Serializable, Cloneable {
 
     @Id
 
@@ -235,4 +235,10 @@ public class User implements Serializable {
     public String toString() {
         return "entities.User[ id=" + id + " ]";
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

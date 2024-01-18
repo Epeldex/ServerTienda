@@ -29,17 +29,22 @@ public class TagREST {
     /**
      * Logger for the class.
      */
-    private static final Logger LOGGER = Logger.getLogger("our_shop");
+    private static final Logger LOGGER = Logger.getLogger("TagREST");
 
     /**
      * EJB for managing Tag entity CRUD operations.
      */
     @EJB
     private TagManagerEJBLocal tagEjb;
-    
+
+    /**
+     * EJB for managing Product entity CRUD operations.
+     */
     @EJB
     private ProductManagerEJBLocal productEjb;
-    
+    /**
+     * EJB for managing ProductsBought entity CRUD operations.
+     */
     @EJB
     private ProductsBoughtManagerEJBLocal productBoughtEjb;
 
@@ -94,8 +99,9 @@ public class TagREST {
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: delete Tag by id={0}.", id);
             //find all the products with said tag
-            for (Integer product_id : productEjb.selectProductWithTagId(id))
+            for (Integer product_id : productEjb.selectProductWithTagId(id)) {
                 productBoughtEjb.deleteByProductId(product_id); // Delete all the products bought of that product
+            }
             productEjb.deleteProductByTagId(id); // Delete the products with said tag
             tagEjb.deleteTag(id); // Delete the tag itself 
         } catch (DeleteException | ReadException ex) {

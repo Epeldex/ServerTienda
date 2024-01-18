@@ -1,21 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package encryption;
 
-import javax.ws.rs.InternalServerErrorException;
-
 /**
+ * The EncriptionManagerFactory class is responsible for providing an instance
+ * of the EncriptionManager interface, allowing clients to obtain a concrete
+ * implementation of the encryption manager.
  *
- * @author alexa
+ * The default implementation returned by this factory is EncriptionManagerImpl.
+ *
+ * @author Alexander Epelde
  */
 public class EncriptionManagerFactory {
 
-    private static EncriptionManager obj = new EncriptionManagerImplementation();
+    /**
+     * The default instance of the EncriptionManager interface.
+     */
+    private static EncriptionManager obj = new EncriptionManagerImpl();
 
-    public static EncriptionManager getEncriptionManager() {
+    /**
+     * Returns an instance of the EncriptionManager interface.
+     *
+     * @return An instance of EncriptionManager.
+     */
+    public static EncriptionManager getInstance() {
         return obj;
     }
 

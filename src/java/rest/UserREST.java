@@ -22,9 +22,6 @@ import java.util.Base64;
  * entities using XML as the data format. It integrates with the
  * {@link UserManagerEJBLocal} EJB for handling business logic.
  *
- * Note: Some methods have incorrect HTTP method annotations (e.g.,
- * findUserByActive should use @GET instead of @POST) and the correct method
- * should be applied based on the intended functionality.
  *
  * @author dani
  */
@@ -34,7 +31,7 @@ public class UserREST {
     /**
      * Logger for the class.
      */
-    private static final Logger LOGGER = Logger.getLogger("rest");
+    private static final Logger LOGGER = Logger.getLogger("UserREST");
 
     /**
      * EJB for managing User entity CRUD operations.
@@ -232,7 +229,7 @@ public class UserREST {
         try {
             return "<key>"
                     + Base64.getEncoder().encodeToString(
-                            EncriptionManagerFactory.getEncriptionManager().getSymmetricKey())
+                            EncriptionManagerFactory.getInstance().getSymmetricKey())
                     + "</key>";
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE,

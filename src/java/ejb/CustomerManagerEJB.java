@@ -33,7 +33,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     @PersistenceContext
     private EntityManager em;
 
-    private EncriptionManager encriptionManager = EncriptionManagerFactory.getEncriptionManager();
+    private EncriptionManager encriptionManager = EncriptionManagerFactory.getInstance();
 
     /**
      * Updates the personal information of a customer identified by their user
@@ -46,6 +46,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     public void updateCustomer(Customer customer) throws UpdateException {
         try {
             LOGGER.info("CustomerManager: Updating customer.");
+            customer.setPassword(Base64.getEncoder().encodeToString(encriptionManager.decryptMessage(customer.getPassword())));
             em.merge(customer);
             LOGGER.info("CustomerManager: Customer updated.");
         } catch (Exception e) {
@@ -85,9 +86,8 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
         try {
             LOGGER.info("CustomerManager: Inserting user.");
             // Persist the user entity using the entity manager.
-            customer.setPassword(encriptionManager.hashMessage(customer.getPassword()));
+            customer.setPassword(Base64.getEncoder().encodeToString(encriptionManager.decryptMessage(customer.getPassword())));
             em.persist(customer);
-
             LOGGER.info("CustomerManager: User inserted.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception inserting user.", e);
@@ -108,9 +108,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
         try {
             LOGGER.info("CustomerManager: Getting customer, ID " + userId);
             // Execute a named query to get a customer by user ID.
-            Customer c = (Customer) em.createNamedQuery("getCustomer").setParameter("userId", userId).getSingleResult();
-            c.setPassword(Base64.getEncoder().encodeToString(encriptionManager.encryptMessage(c.getPassword())));
-            return c;
+            return encryptPassword((Customer) em.createNamedQuery("getCustomer").setParameter("userId", userId).getSingleResult());
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception getting Customer. ", e);
             throw new ReadException("Error getting customer");
@@ -130,6 +128,11 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
         }
     }
 
+    private Customer encryptPassword(Customer customer) throws Exception {
+        Customer c = (Customer) customer.clone();
+        c.setPassword(Base64.getEncoder().encodeToString(encriptionManager.encryptMessage(c.getPassword())));
+        return c;
+    }
 
     @Override
     public Customer findCustomerByEmail(String email) throws UpdateException {
