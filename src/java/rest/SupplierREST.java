@@ -57,7 +57,7 @@ public class SupplierREST {
      * processing.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void create(Supplier supplier) {
         try {
             LOGGER.log(Level.INFO, "SupplierRESTful service: create {0}.", supplier);
@@ -77,7 +77,7 @@ public class SupplierREST {
      * processing.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void update(Supplier supplier) {
         try {
             LOGGER.log(Level.INFO, "SupplierRESTful service: update {0}.", supplier);
@@ -122,7 +122,7 @@ public class SupplierREST {
      */
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Supplier find(@PathParam("id") Integer id) {
         Supplier supplier = null;
         try {
@@ -143,7 +143,7 @@ public class SupplierREST {
      * processing.
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Supplier> findAll() {
         List<Supplier> suppliers = null;
         try {

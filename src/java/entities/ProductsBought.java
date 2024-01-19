@@ -1,5 +1,7 @@
 package entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -52,6 +54,8 @@ public class ProductsBought implements Serializable {
 
     // The timestamp indicating when the products were bought
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonSerialize(as = Date.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private Date boughtTimestamp;
 
     @JoinColumn(name = "customerId", updatable = false, insertable = false)
@@ -114,7 +118,6 @@ public class ProductsBought implements Serializable {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-
 
     public Product getProduct() {
         return product;

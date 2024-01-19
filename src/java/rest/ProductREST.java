@@ -51,7 +51,7 @@ public class ProductREST {
      * processing.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void create(Product product) {
         try {
             LOGGER.log(Level.INFO, "ProductRESTful service: create {0}.", product);
@@ -71,7 +71,7 @@ public class ProductREST {
      * processing.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void update(Product product) {
         try {
             LOGGER.log(Level.INFO, "ProductRESTful service: update {0}.", product);
@@ -112,7 +112,7 @@ public class ProductREST {
      */
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Product find(@PathParam("id") Integer id) {
         Product product = null;
         try {
@@ -133,7 +133,7 @@ public class ProductREST {
      * processing.
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Product> findAll() {
         List<Product> products = null;
         try {

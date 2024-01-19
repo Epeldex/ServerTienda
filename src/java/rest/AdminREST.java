@@ -9,7 +9,6 @@ import exceptions.UpdateException;
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ejb.local.AdminManagerEJBLocal;
@@ -46,7 +45,7 @@ public class AdminREST {
 //     * processing.
 //     */
 //    @PUT
-//    @Consumes(MediaType.APPLICATION_XML)
+//    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 //    public void updateLastAccess(Admin admin) {
 //        try {
 //            LOGGER.log(Level.INFO, "AdminRESTful service: Updating last access of admin; id={0}",
@@ -69,8 +68,8 @@ public class AdminREST {
      */
     @POST
     @Path("signin")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Admin signIn(Admin admin) {
         try {
             LOGGER.info("AdminRESTful service: Signing in admin.");
@@ -89,7 +88,7 @@ public class AdminREST {
      * processing.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void createAdmin(Admin admin) {
         try {
             LOGGER.log(Level.INFO, "AdminRESTful service: Creating new admin {0}.", admin);
@@ -108,7 +107,7 @@ public class AdminREST {
      * processing.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void updateAdmin(Admin admin) {
         try {
             LOGGER.log(Level.INFO, "AdminRESTful service: Updating admin {0}.", admin);

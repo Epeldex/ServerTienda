@@ -1,5 +1,7 @@
 package entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -45,7 +47,6 @@ import javax.xml.bind.annotation.XmlTransient;
             query = "SELECT s FROM Supplier s WHERE s.supplier_id = :supplierId")
 })
 
-
 public class Supplier implements Serializable {
 
     /**
@@ -84,6 +85,8 @@ public class Supplier implements Serializable {
      * Timestamp indicating when the supplier was created.
      */
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonSerialize(as = Date.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private Date createTimestamp;
 
     /**
