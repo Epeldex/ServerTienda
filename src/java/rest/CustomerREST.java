@@ -3,7 +3,6 @@ package rest;
 import ejb.local.CustomerManagerEJBLocal;
 import ejb.local.ProductsBoughtManagerEJBLocal;
 import entities.Customer;
-import entities.User;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
@@ -40,7 +39,7 @@ public class CustomerREST {
      * @param customer The Customer object containing updated information.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void updateCustomerInfo(Customer customer) {
         try {
             LOGGER.info("CustomerREST service: Updating customer information.");
@@ -76,7 +75,7 @@ public class CustomerREST {
      * customer.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void insertCustomer(Customer customer) {
         try {
             LOGGER.info("CustomerREST service: Inserting customer.");
@@ -96,7 +95,7 @@ public class CustomerREST {
      */
     @GET
     @Path("{userId}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Customer getCustomer(@PathParam("userId") Integer userId) {
         try {
             LOGGER.info("CustomerREST service: Get customer with id=" + userId);
@@ -117,7 +116,7 @@ public class CustomerREST {
      */
     @PUT
     @Path("{email}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void resetPasword(@PathParam("email") String email) {
         try {
             LOGGER.log(Level.INFO, "CustomerRESTful service: find Customer by email=" + email);

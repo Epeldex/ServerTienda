@@ -56,7 +56,7 @@ public class TagREST {
      * processing.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void create(Tag tag) {
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: create {0}.", tag);
@@ -75,7 +75,7 @@ public class TagREST {
      * processing.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void update(Tag tag) {
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: update {0}.", tag);
@@ -120,7 +120,7 @@ public class TagREST {
      */
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Tag find(@PathParam("id") Integer id) {
         Tag tag = null;
         try {
@@ -141,7 +141,7 @@ public class TagREST {
      * processing.
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Tag> findAll() {
         List<Tag> tags = null;
         try {

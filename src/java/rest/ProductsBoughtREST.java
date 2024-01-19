@@ -40,7 +40,7 @@ public class ProductsBoughtREST {
      * the product.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void purchaseProduct(Customer customer) {
         try {
             LOGGER.info("ProductsBoughtREST service: Purchasing product");
@@ -62,7 +62,7 @@ public class ProductsBoughtREST {
      * about the purchased product.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void updateAmount(ProductsBought productBought) {
         try {
             productsBoughtEjb.updateAmount(productBought.getAmount(), productBought.getId().getCustomerId(), productBought.getId().getProductId());
@@ -83,7 +83,7 @@ public class ProductsBoughtREST {
      */
     @GET
     @Path("{customerId}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<ProductsBought> getProductsBought(@PathParam("customerId") Integer customerId) {
         try {
             LOGGER.info("ProductsBoughtREST service: Get products bought by customer with id=" + customerId);

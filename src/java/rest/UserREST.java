@@ -47,7 +47,7 @@ public class UserREST {
      * processing.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void createUser(User user) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: create {0}.", user);
@@ -66,7 +66,7 @@ public class UserREST {
      * processing.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void updateUser(User user) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: update {0}.", user);
@@ -106,7 +106,7 @@ public class UserREST {
      */
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User findUserById(@PathParam("id") Integer id) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find User by id={0}.", id);
@@ -125,7 +125,7 @@ public class UserREST {
      * processing.
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<User> findAllUsers() {
 
         try {
@@ -147,7 +147,7 @@ public class UserREST {
      */
     @GET
     @Path("username/{username}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User findUserByUsername(@PathParam("username") String username) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find User by username={0}.", username);
@@ -169,7 +169,7 @@ public class UserREST {
      */
     @GET
     @Path("active/{active}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<User> findUserByActive(@PathParam("active") Boolean active) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find users by active status {0}.", active);
@@ -191,8 +191,8 @@ public class UserREST {
      */
     @POST
     @Path("signin")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User signIn(User user) {
         try {
             LOGGER.info("UserRESTful service: Signing in user.");
@@ -212,7 +212,7 @@ public class UserREST {
 //      processing.
 //     
 //    @PUT
-//    @Consumes(MediaType.APPLICATION_XML)
+//    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 //    public void updatePassword(User user) {
 //        try {
 //            LOGGER.info("UserRESTful service: Updating user password.");
@@ -224,7 +224,7 @@ public class UserREST {
 //    }
     @GET
     @Path("key")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public String requestSymmetricKey() {
         try {
             return "<key>"
