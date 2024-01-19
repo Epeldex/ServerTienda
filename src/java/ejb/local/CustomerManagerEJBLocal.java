@@ -37,8 +37,8 @@ public interface CustomerManagerEJBLocal {
     public void deleteCustomerById(Integer id) throws DeleteException;
 
     /**
-     * Inserts a Customer into the system.
      * Obtains a Customer by email.
+     *
      * @param email The email of the customer that requests it.
      * @throws UpdateException If an error occurs during the process.
      */

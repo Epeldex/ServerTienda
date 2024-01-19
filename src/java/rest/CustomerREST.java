@@ -115,7 +115,7 @@ public class CustomerREST {
      * @throws InternalServerErrorException If there is any Exception during
      * processing.
      */
-    @GET
+    @PUT
     @Path("{email}")
     @Produces(MediaType.APPLICATION_XML)
     public void resetPasword(@PathParam("email") String email) {
