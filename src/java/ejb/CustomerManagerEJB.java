@@ -125,7 +125,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
 
 
     @Override
-    public Customer findCustomerByEmail(String email) throws UpdateException {
+    public Customer resetPasword(String email) throws UpdateException {
         try {
             LOGGER.info("Reseting user password. email= " + email);
             return Customer.class.cast(

@@ -128,7 +128,12 @@ public class CustomerREST {
     public void resetPasword(@PathParam("email") String email) {
         try {
             LOGGER.log(Level.INFO, "CustomerRESTful service: find Customer by email=" + email);
-            Customer c = customerEjb.findCustomerByEmail(email);
+            // TODO: reset password only obtains the user by mail,
+            // the managing, new password and subsequent encyption must
+            // be done HERE
+            
+            
+            Customer c = customerEjb.resetPasword(email);
             c.setPassword(
                 c.getPassword()
             );
