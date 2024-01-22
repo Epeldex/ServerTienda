@@ -1,12 +1,14 @@
 package ejb;
 
 import ejb.local.CustomerManagerEJBLocal;
+import encryption.EncriptionManager;
+import encryption.EncriptionManagerFactory;
 import entities.Customer;
-import entities.User;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
+import java.util.Base64;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -31,6 +33,8 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     @PersistenceContext
     private EntityManager em;
 
+    private EncriptionManager encriptionManager = EncriptionManagerFactory.getInstance();
+
     /**
      * Updates the personal information of a customer identified by their user
      * ID.
@@ -42,6 +46,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     public void updateCustomer(Customer customer) throws UpdateException {
         try {
             LOGGER.info("CustomerManager: Updating customer.");
+            customer.setPassword(Base64.getEncoder().encodeToString(encriptionManager.decryptMessage(customer.getPassword())));
             em.merge(customer);
             LOGGER.info("CustomerManager: Customer updated.");
         } catch (Exception e) {
@@ -73,16 +78,16 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     /**
      * Inserts a new user (customer) into the system.
      *
-     * @param user The User object representing the new user.
+     * @param customer The User object representing the new user.
      * @throws CreateException If an error occurs during the creation process.
      */
     @Override
-    public void insertUser(User user) throws CreateException {
+    public void insertCustomer(Customer customer) throws CreateException {
         try {
             LOGGER.info("CustomerManager: Inserting user.");
             // Persist the user entity using the entity manager.
-            em.persist(user);
-
+            customer.setPassword(Base64.getEncoder().encodeToString(encriptionManager.decryptMessage(customer.getPassword())));
+            em.persist(customer);
             LOGGER.info("CustomerManager: User inserted.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception inserting user.", e);
@@ -103,7 +108,7 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
         try {
             LOGGER.info("CustomerManager: Getting customer, ID " + userId);
             // Execute a named query to get a customer by user ID.
-            return (Customer) em.createNamedQuery("getCustomer").setParameter("userId", userId).getSingleResult();
+            return encryptPassword((Customer) em.createNamedQuery("getCustomer").setParameter("userId", userId).getSingleResult());
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception getting Customer. ", e);
             throw new ReadException("Error getting customer");
@@ -123,20 +128,23 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
         }
     }
 
+    private Customer encryptPassword(Customer customer) throws Exception {
+        Customer c = (Customer) customer.clone();
+        c.setPassword(Base64.getEncoder().encodeToString(encriptionManager.encryptMessage(c.getPassword())));
+        return c;
+    }
 
     @Override
     public Customer resetPasword(String email) throws UpdateException {
         try {
             LOGGER.info("Reseting user password. email= " + email);
             return Customer.class.cast(
-                em.createNamedQuery("findCustomerByEmail")
-            .setParameter("email", email)
-                    .getSingleResult());
+                    em.createNamedQuery("findCustomerByEmail")
+                            .setParameter("email", email)
+                            .getSingleResult());
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception reseting Customer password. ", e);
             throw new UpdateException(e.getMessage());
         }
     }
-
-    
 }

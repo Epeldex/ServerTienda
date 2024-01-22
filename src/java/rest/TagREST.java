@@ -29,17 +29,22 @@ public class TagREST {
     /**
      * Logger for the class.
      */
-    private static final Logger LOGGER = Logger.getLogger("our_shop");
+    private static final Logger LOGGER = Logger.getLogger("TagREST");
 
     /**
      * EJB for managing Tag entity CRUD operations.
      */
     @EJB
     private TagManagerEJBLocal tagEjb;
-    
+
+    /**
+     * EJB for managing Product entity CRUD operations.
+     */
     @EJB
     private ProductManagerEJBLocal productEjb;
-    
+    /**
+     * EJB for managing ProductsBought entity CRUD operations.
+     */
     @EJB
     private ProductsBoughtManagerEJBLocal productBoughtEjb;
 
@@ -51,7 +56,7 @@ public class TagREST {
      * processing.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void create(Tag tag) {
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: create {0}.", tag);
@@ -70,7 +75,7 @@ public class TagREST {
      * processing.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void update(Tag tag) {
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: update {0}.", tag);
@@ -94,8 +99,9 @@ public class TagREST {
         try {
             LOGGER.log(Level.INFO, "TagRESTful service: delete Tag by id={0}.", id);
             //find all the products with said tag
-            for (Integer product_id : productEjb.selectProductWithTagId(id))
+            for (Integer product_id : productEjb.selectProductWithTagId(id)) {
                 productBoughtEjb.deleteByProductId(product_id); // Delete all the products bought of that product
+            }
             productEjb.deleteProductByTagId(id); // Delete the products with said tag
             tagEjb.deleteTag(id); // Delete the tag itself 
         } catch (DeleteException | ReadException ex) {
@@ -114,7 +120,7 @@ public class TagREST {
      */
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Tag find(@PathParam("id") Integer id) {
         Tag tag = null;
         try {
@@ -135,7 +141,7 @@ public class TagREST {
      * processing.
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Tag> findAll() {
         List<Tag> tags = null;
         try {

@@ -2,9 +2,7 @@ package rest;
 
 import ejb.local.CustomerManagerEJBLocal;
 import ejb.local.ProductsBoughtManagerEJBLocal;
-import ejb.local.UserManagerEJBLocal;
 import entities.Customer;
-import entities.User;
 import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
@@ -19,40 +17,35 @@ import java.util.logging.Logger;
 /**
  * The CustomerREST class represents a RESTful web service for managing
  * customer-related operations. It exposes endpoints for updating customer
- * information, deleting a customer, inserting a new user, and retrieving
+ * information, deleting a customer, inserting a new customer, and retrieving
  * customer details.
  *
  * @author Alex Irusta
- *
  */
 @Path("customers")
 public class CustomerREST {
 
-    private static final Logger LOGGER = Logger.getLogger("ejb");
+    private static final Logger LOGGER = Logger.getLogger("CustomerREST");
 
     @EJB
-    private CustomerManagerEJBLocal customerEjb;
+    private CustomerManagerEJBLocal customerEjb;  // EJB for managing customer-related operations
 
     @EJB
-    private UserManagerEJBLocal userEjb;
-
-    @EJB
-    private ProductsBoughtManagerEJBLocal productBoughtEjb;
+    private ProductsBoughtManagerEJBLocal productBoughtEjb;  // EJB for managing products bought by customers
 
     /**
      * Handles the HTTP PUT request for updating customer information.
      *
      * @param customer The Customer object containing updated information.
-     * @return Response indicating the success or failure of the operation.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
-    public void updatePersonalInfo(Customer customer) {
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public void updateCustomerInfo(Customer customer) {
         try {
-            LOGGER.info("CustomerRESTful service: Updating customer information.");
+            LOGGER.info("CustomerREST service: Updating customer information.");
             customerEjb.updateCustomer(customer);
         } catch (UpdateException ex) {
-            LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception updating customer information.", ex);
+            LOGGER.log(Level.SEVERE, "CustomerREST service: Exception updating customer information.", ex);
             throw new InternalServerErrorException(ex);
         }
     }
@@ -61,35 +54,34 @@ public class CustomerREST {
      * Handles the HTTP DELETE request for deleting a customer by ID.
      *
      * @param id The ID of the customer to be deleted.
-     * @return Response indicating the success or failure of the operation.
      */
     @DELETE
     @Path("{id}")
     public void deleteCustomer(@PathParam("id") Integer id) {
         try {
-            LOGGER.info("CustomerRESTful service: Deleting customer by id=" + id);
+            LOGGER.info("CustomerREST service: Deleting customer with id=" + id);
             productBoughtEjb.deleteByCustomerId(id);
             customerEjb.deleteCustomerById(id);
         } catch (DeleteException ex) {
-            LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception deleting customer.", ex);
+            LOGGER.log(Level.SEVERE, "CustomerREST service: Exception deleting customer.", ex);
             throw new InternalServerErrorException(ex);
         }
     }
 
     /**
-     * Handles the HTTP POST request for inserting a new user.
+     * Handles the HTTP POST request for inserting a new customer.
      *
-     * @param user The User object containing information for the new user.
-     * @return Response indicating the success or failure of the operation.
+     * @param customer The Customer object containing information for the new
+     * customer.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void insertCustomer(Customer customer) {
         try {
-            LOGGER.info("CustomerRESTful service: Inserting user.");
-            customerEjb.insertUser(customer);
+            LOGGER.info("CustomerREST service: Inserting customer.");
+            customerEjb.insertCustomer(customer);
         } catch (CreateException ex) {
-            LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception inserting user.", ex);
+            LOGGER.log(Level.SEVERE, "CustomerREST service: Exception inserting customer.", ex);
             throw new InternalServerErrorException(ex);
         }
     }
@@ -99,17 +91,17 @@ public class CustomerREST {
      *
      * @param userId The ID of the customer to retrieve.
      * @return Response containing the retrieved Customer object or an error
-     *         message.
+     * message.
      */
     @GET
     @Path("{userId}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Customer getCustomer(@PathParam("userId") Integer userId) {
         try {
-            LOGGER.info("CustomerRESTful service: Get customer by id=" + userId);
+            LOGGER.info("CustomerREST service: Get customer with id=" + userId);
             return customerEjb.getCustomer(userId);
         } catch (ReadException ex) {
-            LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception getting customer.", ex);
+            LOGGER.log(Level.SEVERE, "CustomerREST service: Exception getting customer.", ex);
             throw new InternalServerErrorException(ex);
         }
     }
@@ -122,9 +114,9 @@ public class CustomerREST {
      * @throws InternalServerErrorException If there is any Exception during
      * processing.
      */
-    @GET
+    @PUT
     @Path("{email}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void resetPasword(@PathParam("email") String email) {
         try {
             LOGGER.log(Level.INFO, "CustomerRESTful service: find Customer by email=" + email);

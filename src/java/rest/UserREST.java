@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ejb.local.UserManagerEJBLocal;
+import encryption.EncriptionManagerFactory;
+import java.util.Base64;
 
 // ... (Previous imports and class-level comments)
 /**
@@ -20,9 +22,6 @@ import ejb.local.UserManagerEJBLocal;
  * entities using XML as the data format. It integrates with the
  * {@link UserManagerEJBLocal} EJB for handling business logic.
  *
- * Note: Some methods have incorrect HTTP method annotations (e.g.,
- * findUserByActive should use @GET instead of @POST) and the correct method
- * should be applied based on the intended functionality.
  *
  * @author dani
  */
@@ -32,7 +31,7 @@ public class UserREST {
     /**
      * Logger for the class.
      */
-    private static final Logger LOGGER = Logger.getLogger("rest");
+    private static final Logger LOGGER = Logger.getLogger("UserREST");
 
     /**
      * EJB for managing User entity CRUD operations.
@@ -48,7 +47,7 @@ public class UserREST {
      * processing.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void createUser(User user) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: create {0}.", user);
@@ -67,7 +66,7 @@ public class UserREST {
      * processing.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void updateUser(User user) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: update {0}.", user);
@@ -107,11 +106,11 @@ public class UserREST {
      */
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User findUserById(@PathParam("id") Integer id) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find User by id={0}.", id);
-            return ejb.findUserById(id);
+            return User.getInnerUser(ejb.findUserById(id));
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading user by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -126,7 +125,7 @@ public class UserREST {
      * processing.
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<User> findAllUsers() {
 
         try {
@@ -148,11 +147,11 @@ public class UserREST {
      */
     @GET
     @Path("username/{username}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User findUserByUsername(@PathParam("username") String username) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find User by username={0}.", username);
-            return ejb.findUserByUsername(username);
+            return User.getInnerUser(ejb.findUserByUsername(username));
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading user by username, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -170,7 +169,7 @@ public class UserREST {
      */
     @GET
     @Path("active/{active}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<User> findUserByActive(@PathParam("active") Boolean active) {
         try {
             LOGGER.log(Level.INFO, "UserRESTful service: find users by active status {0}.", active);
@@ -192,12 +191,12 @@ public class UserREST {
      */
     @POST
     @Path("signin")
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public User signIn(User user) {
         try {
             LOGGER.info("UserRESTful service: Signing in user.");
-            return ejb.signIn(user.getUsername(), user.getPassword());
+            return User.getInnerUser(ejb.signIn(user.getUsername(), user.getPassword()));
         } catch (ReadException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception signing in user, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
@@ -213,7 +212,7 @@ public class UserREST {
 //      processing.
 //     
 //    @PUT
-//    @Consumes(MediaType.APPLICATION_XML)
+//    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 //    public void updatePassword(User user) {
 //        try {
 //            LOGGER.info("UserRESTful service: Updating user password.");
@@ -223,4 +222,19 @@ public class UserREST {
 //            throw new InternalServerErrorException(ex);
 //        }
 //    }
+    @GET
+    @Path("key")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public String requestSymmetricKey() {
+        try {
+            return "<key>"
+                    + Base64.getEncoder().encodeToString(
+                            EncriptionManagerFactory.getInstance().getSymmetricKey())
+                    + "</key>";
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE,
+                    ex.getMessage());
+            throw new InternalServerErrorException(ex);
+        }
+    }
 }

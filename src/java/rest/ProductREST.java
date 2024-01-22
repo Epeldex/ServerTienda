@@ -29,14 +29,17 @@ public class ProductREST {
     /**
      * Logger for the class.
      */
-    private static final Logger LOGGER = Logger.getLogger("our_shop");
+    private static final Logger LOGGER = Logger.getLogger("ProductREST");
 
     /**
      * EJB for managing Product entity CRUD operations.
      */
     @EJB
     private ProductManagerEJBLocal productEjb;
-
+    
+    /**
+     * EJB for managing ProductsBought entity CRUD operations.
+     */
     @EJB
     private ProductsBoughtManagerEJBLocal productsBoughtEjb;
 
@@ -45,10 +48,10 @@ public class ProductREST {
      *
      * @param product The {@link Product} object containing the product data.
      * @throws InternalServerErrorException If there is any Exception during
-     *                                      processing.
+     * processing.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void create(Product product) {
         try {
             LOGGER.log(Level.INFO, "ProductRESTful service: create {0}.", product);
@@ -63,12 +66,12 @@ public class ProductREST {
      * Updates an existing Product using XML data.
      *
      * @param product The {@link Product} object containing the updated product
-     *                data.
+     * data.
      * @throws InternalServerErrorException If there is any Exception during
-     *                                      processing.
+     * processing.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void update(Product product) {
         try {
             LOGGER.log(Level.INFO, "ProductRESTful service: update {0}.", product);
@@ -84,7 +87,7 @@ public class ProductREST {
      *
      * @param id The ID of the Product to be deleted.
      * @throws InternalServerErrorException If there is any Exception during
-     *                                      processing.
+     * processing.
      */
     @DELETE
     @Path("{id}")
@@ -105,11 +108,11 @@ public class ProductREST {
      * @param id The ID of the Product to be retrieved.
      * @return The retrieved {@link Product} object.
      * @throws InternalServerErrorException If there is any Exception during
-     *                                      processing.
+     * processing.
      */
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Product find(@PathParam("id") Integer id) {
         Product product = null;
         try {
@@ -127,10 +130,10 @@ public class ProductREST {
      *
      * @return A List of {@link Product} objects representing all products.
      * @throws InternalServerErrorException If there is any Exception during
-     *                                      processing.
+     * processing.
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Product> findAll() {
         List<Product> products = null;
         try {

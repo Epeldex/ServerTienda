@@ -21,35 +21,35 @@ import java.util.logging.Logger;
  * of products bought by a customer.
  *
  * @author Alex Irusta
- *
  */
 @Path("productsBought")
 public class ProductsBoughtREST {
 
-    private static final Logger LOGGER = Logger.getLogger("ourshop.ejb");
+    private static final Logger LOGGER = Logger.getLogger("ProductsBoughtREST");
 
     @EJB
-    private ProductsBoughtManagerEJBLocal productsBoughtEjb;
+    private ProductsBoughtManagerEJBLocal productsBoughtEjb;  // EJB for managing products bought operations
 
     @EJB
-    private CustomerManagerEJBLocal customerEjb;
+    private CustomerManagerEJBLocal customerEjb;  // EJB for managing customer-related operations
 
     /**
      * Handles the HTTP POST request for purchasing a product.
      *
-     * @param productBought
+     * @param customer The Customer object representing the customer purchasing
+     * the product.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void purchaseProduct(Customer customer) {
         try {
-            LOGGER.info("Purchasing product");
+            LOGGER.info("ProductsBoughtREST service: Purchasing product");
             customerEjb.updateBalance(customer.getBalance(), customer.getId());
             for (ProductsBought pb : customer.getProductsBought()) {
                 productsBoughtEjb.purchaseProduct(pb);
             }
         } catch (UpdateException e) {
-            LOGGER.log(Level.SEVERE, "Error purchasing product", e);
+            LOGGER.log(Level.SEVERE, "ProductsBoughtREST service: Error purchasing product", e);
             throw new InternalServerErrorException(e);
         }
     }
@@ -58,17 +58,16 @@ public class ProductsBoughtREST {
      * Handles the HTTP PUT request for updating the amount of a purchased
      * product.
      *
-     * @param customerId The ID of the customer who purchased the product.
-     * @param productId The ID of the product to be updated.
-     * @param amount The new quantity of the purchased product.
+     * @param productBought The ProductsBought object containing information
+     * about the purchased product.
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void updateAmount(ProductsBought productBought) {
         try {
             productsBoughtEjb.updateAmount(productBought.getAmount(), productBought.getId().getCustomerId(), productBought.getId().getProductId());
         } catch (UpdateException e) {
-            LOGGER.log(Level.SEVERE, "Error updating amount", e);
+            LOGGER.log(Level.SEVERE, "ProductsBoughtREST service: Error updating amount", e);
             throw new InternalServerErrorException(e);
         }
     }
@@ -79,17 +78,18 @@ public class ProductsBoughtREST {
      *
      * @param customerId The ID of the customer for whom to retrieve the
      * purchased products.
-     * @return Response containing the list of products bought or an error
-     * message.
+     * @return List of ProductsBought representing the products bought by the
+     * customer.
      */
     @GET
     @Path("{customerId}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<ProductsBought> getProductsBought(@PathParam("customerId") Integer customerId) {
         try {
+            LOGGER.info("ProductsBoughtREST service: Get products bought by customer with id=" + customerId);
             return productsBoughtEjb.getProductsBought(customerId);
         } catch (ReadException e) {
-            LOGGER.log(Level.SEVERE, "Error getting products bought", e);
+            LOGGER.log(Level.SEVERE, "ProductsBoughtREST service: Error getting products bought", e);
             e.printStackTrace();
             throw new InternalServerErrorException(e);
         }

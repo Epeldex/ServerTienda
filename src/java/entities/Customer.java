@@ -1,8 +1,6 @@
 package entities;
 
 import java.util.Set;
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.CascadeType.MERGE;
 import javax.persistence.Entity;
 import static javax.persistence.FetchType.EAGER;
 import javax.persistence.NamedQueries;
@@ -35,13 +33,10 @@ import javax.xml.bind.annotation.XmlRootElement;
             query = "SELECT c FROM Customer c WHERE c.id = :userId")
     ,
     @NamedQuery(name = "purchaseProduct",
-            query = "UPDATE Customer c SET c.balance = :balance WHERE c.id = :customerId"),
-
+            query = "UPDATE Customer c SET c.balance = :balance WHERE c.id = :customerId")
+    ,
     @NamedQuery(name = "findCustomerByEmail",
-            query = "SELECT C FROM Customer c WHERE c.email = :email"),
-    
-
-})
+            query = "SELECT c FROM Customer c WHERE c.email = :email")})
 public class Customer extends User {
 
     // The full name of the customer
