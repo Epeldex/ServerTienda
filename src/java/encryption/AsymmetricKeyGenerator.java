@@ -75,4 +75,8 @@ public class AsymmetricKeyGenerator {
             keyFile.write(key.getEncoded());
         }
     }
+
+    public static void main(String args[]) {
+        generateKeyPair();
+    }
 }

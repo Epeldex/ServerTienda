@@ -123,9 +123,6 @@ public class CustomerREST {
             LOGGER.log(Level.INFO, "CustomerRESTful service: find Customer by email=" + email);
 
             String password = new EmailManager().createPasswordAndSend(email);
-            // TODO: reset password only obtains the user by mail,
-            // the managing, new password and subsequent encyption must
-            // be done HERE
             
 
             // this method returns the customer to update the password
@@ -134,6 +131,7 @@ public class CustomerREST {
             Customer c = customerEjb.resetPasword(email);
             c.setPassword(password);
             customerEjb.updateCustomer(c);
+
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading user by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
