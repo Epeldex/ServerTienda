@@ -2,6 +2,7 @@ package rest;
 
 import ejb.local.CustomerManagerEJBLocal;
 import ejb.local.ProductsBoughtManagerEJBLocal;
+import encryption.EmailManager;
 import entities.Customer;
 import exceptions.CreateException;
 import exceptions.DeleteException;
@@ -120,14 +121,17 @@ public class CustomerREST {
     public void resetPasword(@PathParam("email") String email) {
         try {
             LOGGER.log(Level.INFO, "CustomerRESTful service: find Customer by email=" + email);
-            // TODO: reset password only obtains the user by mail,
-            // the managing, new password and subsequent encyption must
-            // be done HERE
 
+            String password = new EmailManager().createPasswordAndSend(email);
+            
+
+            // this method returns the customer to update the password
+            // even though its called reset, it only searches the user witht the email
+            // i thought it would be confusing using different names 
             Customer c = customerEjb.resetPasword(email);
-            c.setPassword(
-                    c.getPassword()
-            );
+            c.setPassword(password);
+            customerEjb.updateCustomer(c);
+
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading user by id, {0}", ex.getMessage());
             throw new InternalServerErrorException(ex);
