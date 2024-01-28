@@ -1,16 +1,14 @@
 package encryption;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.InternalServerErrorException;
 
 /**
@@ -24,7 +22,7 @@ public class EncriptionManagerImpl implements EncriptionManager {
     private static final Logger LOGGER = Logger.getLogger(EncriptionManagerImpl.class.getName());
 
     private static PrivateKey privateKey;
-    private static PublicKey publicKey;
+    
     private static SecretKey symmetricKey;
 
     /**
@@ -34,8 +32,8 @@ public class EncriptionManagerImpl implements EncriptionManager {
      * @throws InternalServerErrorException if an error occurs during key setup.
      */
     public EncriptionManagerImpl() throws InternalServerErrorException {
-        setupAsymmetricKeys();
-        setupSymmetricKey();
+        symmetricKey = readAESKey();
+        privateKey = getPrivateKey();
     }
 
     /**
@@ -121,64 +119,6 @@ public class EncriptionManagerImpl implements EncriptionManager {
     }
 
     /**
-     * Decrypts the symmetric key using the public key.
-     *
-     * @param key The encrypted symmetric key.
-     * @return The decrypted symmetric key.
-     * @throws InternalServerErrorException if an error occurs during
-     * decryption.
-     */
-    @Override
-    public byte[] decryptSymmetricKey(String key) throws InternalServerErrorException {
-        try {
-            LOGGER.info("Decrypting symmetric key");
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, publicKey);
-            return cipher.doFinal(Base64.getDecoder().decode(key));
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error decrypting symmetric key", e);
-            throw new InternalServerErrorException(e);
-        }
-    }
-
-    /**
-     * Sets up the asymmetric keys by generating them if they do not exist.
-     *
-     * @throws InternalServerErrorException if an error occurs during key
-     * generation.
-     */
-    private void setupAsymmetricKeys() throws InternalServerErrorException {
-        try {
-            if (!new File(System.getProperty("user.home") + "\\AppData\\Local\\OurShop").exists()) {
-                AsymmetricKeyGenerator.generateKeyPair();
-            }
-
-            privateKey = getPrivateKey();
-            publicKey = getPublicKey();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error setting up asymmetric keys", e);
-            throw new InternalServerErrorException(e);
-        }
-    }
-
-    /**
-     * Sets up the symmetric key by generating it if it does not exist.
-     *
-     * @throws InternalServerErrorException if an error occurs during key
-     * generation.
-     */
-    private void setupSymmetricKey() throws InternalServerErrorException {
-        try {
-            if (symmetricKey == null) {
-                symmetricKey = generateAESKey();
-            }
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error setting up symmetric key", e);
-            throw new InternalServerErrorException(e);
-        }
-    }
-
-    /**
      * Retrieves the private key from the file system.
      *
      * @return The private key.
@@ -187,8 +127,9 @@ public class EncriptionManagerImpl implements EncriptionManager {
      */
     private PrivateKey getPrivateKey() throws InternalServerErrorException {
         try {
-            String privateKeyPath = System.getProperty("user.home") + "\\AppData\\Local\\OurShop\\privateKey.der";
-            byte[] privateKeyBytes = readKeyBytes(privateKeyPath);
+            InputStream keyStream = getClass().getClassLoader().getResourceAsStream("/keys/privateKey.der");
+            byte[] privateKeyBytes = new byte[keyStream.available()];
+            keyStream.read(privateKeyBytes);
             PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
             return KeyFactory.getInstance("RSA").generatePrivate(privateKeySpec);
         } catch (Exception e) {
@@ -197,58 +138,24 @@ public class EncriptionManagerImpl implements EncriptionManager {
         }
     }
 
-    /**
-     * Retrieves the public key from the file system.
-     *
-     * @return The public key.
-     * @throws InternalServerErrorException if an error occurs during key
-     * retrieval.
-     */
-    private PublicKey getPublicKey() throws InternalServerErrorException {
-        try {
-            String publicKeyPath = System.getProperty("user.home") + "\\AppData\\Local\\OurShop\\publicKey.der";
-            byte[] publicKeyBytes = readKeyBytes(publicKeyPath);
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
-            return KeyFactory.getInstance("RSA").generatePublic(publicKeySpec);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error getting public key", e);
-            throw new InternalServerErrorException(e);
-        }
-    }
-
-    /**
-     * Generates a new AES key.
-     *
-     * @return The generated AES key.
-     * @throws NoSuchAlgorithmException if an error occurs during key
-     * generation.
-     */
-    private static SecretKey generateAESKey() throws NoSuchAlgorithmException {
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            keyGenerator.init(128);
-            return keyGenerator.generateKey();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error generating AES key", e);
-            throw new NoSuchAlgorithmException(e);
-        }
-    }
-
-    /**
-     * Reads the key bytes from the specified file path.
-     *
-     * @param keyPath The path to the key file.
-     * @return The key bytes.
-     * @throws Exception if an error occurs during key file reading.
-     */
-    private static byte[] readKeyBytes(String keyPath) throws Exception {
-        try (FileInputStream fis = new FileInputStream(keyPath)) {
-            byte[] keyBytes = new byte[fis.available()];
-            fis.read(keyBytes);
-            return keyBytes;
-        }
-    }
-
+//    /**
+//     * Generates a new AES key.
+//     *
+//     * @return The generated AES key.
+//     * @throws NoSuchAlgorithmException if an error occurs during key
+//     * generation.
+//     */
+//    private static void generateAESKey() throws NoSuchAlgorithmException {
+//        try {
+//            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+//            keyGenerator.init(128);
+//            new FileOutputStream(System.getProperty("user.home") + "/keys/symmetricKey.der").write(keyGenerator.generateKey().getEncoded());
+//        } catch (Exception e) {
+//            LOGGER.log(Level.SEVERE, "Error generating AES key", e);
+//            throw new NoSuchAlgorithmException(e);
+//        }
+//    }
+    
     /**
      * Converts byte array to a hexadecimal string representation.
      *
@@ -261,5 +168,23 @@ public class EncriptionManagerImpl implements EncriptionManager {
             hexStringBuilder.append(String.format("%02X", b));
         }
         return hexStringBuilder.toString();
+    }
+
+    /**
+     * Retrieves an AES key from a file and converts it into a SecretKey
+     * instance.
+     *
+     * @return The retrieved SecretKey instance.
+     */
+    public SecretKey readAESKey() throws InternalServerErrorException {
+
+        try {
+            InputStream keyStream = getClass().getClassLoader().getResourceAsStream("/keys/symmetricKey.der");
+            byte[] aesKeyBytes = new byte[keyStream.available()];
+            keyStream.read(aesKeyBytes);
+            return new SecretKeySpec(aesKeyBytes, "AES");
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Error reading key file", e);
+        }
     }
 }

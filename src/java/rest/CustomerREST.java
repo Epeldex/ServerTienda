@@ -123,11 +123,10 @@ public class CustomerREST {
             // TODO: reset password only obtains the user by mail,
             // the managing, new password and subsequent encyption must
             // be done HERE
-            
-            
+
             Customer c = customerEjb.resetPasword(email);
             c.setPassword(
-                c.getPassword()
+                    c.getPassword()
             );
         } catch (UpdateException ex) {
             LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading user by id, {0}", ex.getMessage());

@@ -48,14 +48,4 @@ public interface EncriptionManager {
      */
     public byte[] getSymmetricKey() throws InternalServerErrorException;
 
-    /**
-     * Decrypts the symmetric key using an asymmetric public key.
-     *
-     * @param message The encrypted symmetric key.
-     * @return The decrypted symmetric key.
-     * @throws InternalServerErrorException if an error occurs during
-     * decryption.
-     */
-    public byte[] decryptSymmetricKey(String message) throws InternalServerErrorException;
-
 }
