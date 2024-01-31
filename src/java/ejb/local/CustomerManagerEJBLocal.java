@@ -42,7 +42,7 @@ public interface CustomerManagerEJBLocal {
      * @param email The email of the customer that requests it.
      * @throws UpdateException If an error occurs during the process.
      */
-    public Customer resetPasword(String email) throws UpdateException;
+    public void resetPassword(String email, String password) throws UpdateException;
 
     /**
      * Inserts a new user (customer) into the system.
@@ -71,4 +71,6 @@ public interface CustomerManagerEJBLocal {
      * @throws UpdateException If an error occurs during the update process.
      */
     public void updateBalance(Double balance, Integer customerId) throws UpdateException;
+    
+    public Customer findCustomerByMail(String mail) throws ReadException;
 }

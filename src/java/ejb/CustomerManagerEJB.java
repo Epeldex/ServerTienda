@@ -135,16 +135,29 @@ public class CustomerManagerEJB implements CustomerManagerEJBLocal {
     }
 
     @Override
-    public Customer resetPasword(String email) throws UpdateException {
+    public void resetPassword(String email, String password) throws UpdateException {
         try {
             LOGGER.info("Reseting user password. email= " + email);
-            return Customer.class.cast(
-                    em.createNamedQuery("findCustomerByEmail")
-                            .setParameter("email", email)
-                            .getSingleResult());
+            em.createNamedQuery("resetPassword")
+                    .setParameter("email", email)
+                    .setParameter("password", password)
+                    .executeUpdate();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "CustomerManager: Exception reseting Customer password. ", e);
             throw new UpdateException(e.getMessage());
         }
+    }
+
+    @Override
+    public Customer findCustomerByMail(String mail) throws ReadException {
+        try {
+            LOGGER.info("CustomerManager: Getting customer, mail= " + mail);
+            // Execute a named query to get a customer by user ID.
+            return encryptPassword((Customer) em.createNamedQuery("findCustomerByMail").setParameter("email", mail).getSingleResult());
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "CustomerManager: Exception getting Customer. ", e);
+            throw new ReadException("Error getting customer");
+        }
+
     }
 }

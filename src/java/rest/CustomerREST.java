@@ -3,6 +3,7 @@ package rest;
 import ejb.local.CustomerManagerEJBLocal;
 import ejb.local.ProductsBoughtManagerEJBLocal;
 import encryption.EmailManager;
+import encryption.EncriptionManagerFactory;
 import entities.Customer;
 import exceptions.CreateException;
 import exceptions.DeleteException;
@@ -115,26 +116,19 @@ public class CustomerREST {
      * @throws InternalServerErrorException If there is any Exception during
      * processing.
      */
-    @PUT
-    @Path("{email}")
+    @GET
+    @Path("/email/{mail}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void resetPasword(@PathParam("email") String email) {
+    public Customer resetPasword(@PathParam("mail") String email) {
         try {
             LOGGER.log(Level.INFO, "CustomerRESTful service: find Customer by email=" + email);
-
-            String password = new EmailManager().createPasswordAndSend(email);
-            
-
-            // this method returns the customer to update the password
-            // even though its called reset, it only searches the user witht the email
-            // i thought it would be confusing using different names 
-            Customer c = customerEjb.resetPasword(email);
-            c.setPassword(password);
-            customerEjb.updateCustomer(c);
-
-        } catch (UpdateException ex) {
-            LOGGER.log(Level.SEVERE, "UserRESTful service: Exception reading user by id, {0}", ex.getMessage());
+            String password = EncriptionManagerFactory.getInstance().hashMessage(new EmailManager().createRandomSequence());
+            customerEjb.resetPassword(email, password);
+            return customerEjb.findCustomerByMail(email);
+        } catch (UpdateException | ReadException ex) {
+            LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception reading customer by email:" + email, ex.getMessage());
             throw new InternalServerErrorException(ex);
         }
+
     }
 }

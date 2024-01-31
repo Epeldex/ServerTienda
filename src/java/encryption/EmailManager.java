@@ -6,16 +6,16 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.Properties;
 import java.util.Random;
 
+import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Date;
 
 import java.nio.charset.StandardCharsets;
 
@@ -32,7 +32,7 @@ public class EmailManager {
         return password;
     }
 
-    private String createRandomSequence() {
+    public String createRandomSequence() {
         Random random = new Random();
 
         // Characters pool: letters, numbers, and some special symbols
@@ -54,21 +54,22 @@ public class EmailManager {
     private void sendEmail(String recipient, String password) {
         String emailToSend = getMailPrompt();
 
-        //String emailToSend = "html.toString()";
-        // port and host configuration
+        recipient = "danielbarrios2002@gmail.com";
+        String emailText = "WHATEVEEERRRR";
+
         final String ZOHO_HOST = "smtp.zoho.eu";
         final String TLS_PORT = "897";
-        // senders credentials
+       
         final String SENDER_USERNAME = "bmoncalvillo@zohomail.eu";
         final String SENDER_PASSWORD = "Du75zJLqbaZ1";
 
         // protocol properties
         Properties props = System.getProperties();
-        props.setProperty("mail.smtps.host", ZOHO_HOST); // change to GMAIL_HOST for gmail // for gmail
+        props.setProperty("mail.smtps.host", ZOHO_HOST); // change to GMAIL_HOST for gmail                                                         // for gmail
         props.setProperty("mail.smtp.port", TLS_PORT);
         props.setProperty("mail.smtp.starttls.enable", "true");
         props.setProperty("mail.smtps.auth", "true");
-
+        
         // close connection upon quit being sent
         props.put("mail.smtps.quitwait", "false");
 
@@ -81,22 +82,28 @@ public class EmailManager {
             // set recipients and content
             msg.setFrom(new InternetAddress(SENDER_USERNAME));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient, false));
-            msg.setSubject("Demo");
-            msg.setText(emailToSend, "utf-8", "html");
+            msg.setSubject("Password Recovery");
+            msg.setText(emailText, "utf-8", "html");
             msg.setSentDate(new Date());
 
             // send the mail
             Transport transport = session.getTransport("smtps");
-            // send the mail
-            transport.connect(ZOHO_HOST, SENDER_USERNAME, SENDER_PASSWORD);
-            transport.sendMessage(msg, msg.getAllRecipients());
+                // send the mail
+                transport.connect(ZOHO_HOST, SENDER_USERNAME, SENDER_PASSWORD);
+                transport.sendMessage(msg, msg.getAllRecipients());
+            
+            
+            
 
-        } catch (MessagingException e) {
+        } catch (MessagingException e) 
+        {
+            throw new RuntimeException(e);
+
         }
     }
 
     private String getMailPrompt() {
-        // Specify the path to your HTML file
+        // Specify the path to HTML file
         try {
             URL url = getClass().getResource("/resources/Email.html");
             File file = new File(url.getPath());
@@ -107,7 +114,7 @@ public class EmailManager {
             e.printStackTrace();
 
         }
-        return "";
+        return "ERRROROROROROROR DANI";
     }
 
     private String readHtmlFile(File file) throws IOException {
