@@ -9,6 +9,7 @@ import exceptions.CreateException;
 import exceptions.DeleteException;
 import exceptions.ReadException;
 import exceptions.UpdateException;
+import java.util.Base64;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -122,9 +123,11 @@ public class CustomerREST {
     public Customer resetPasword(@PathParam("mail") String email) {
         try {
             LOGGER.log(Level.INFO, "CustomerRESTful service: find Customer by email=" + email);
-            String password = EncriptionManagerFactory.getInstance().hashMessage(new EmailManager().createRandomSequence());
-            customerEjb.resetPassword(email, password);
-            return customerEjb.findCustomerByMail(email);
+            String password = new EmailManager().createRandomSequence();
+            customerEjb.resetPassword(email, EncriptionManagerFactory.getInstance().hashMessage(password));
+            Customer customer = customerEjb.findCustomerByMail(email);
+            customer.setPassword(Base64.getEncoder().encodeToString(EncriptionManagerFactory.getInstance().encryptMessage(password)));
+            return customer;
         } catch (UpdateException | ReadException ex) {
             LOGGER.log(Level.SEVERE, "CustomerRESTful service: Exception reading customer by email:" + email, ex.getMessage());
             throw new InternalServerErrorException(ex);

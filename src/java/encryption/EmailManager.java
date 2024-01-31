@@ -36,10 +36,10 @@ public class EmailManager {
         Random random = new Random();
 
         // Characters pool: letters, numbers, and some special symbols
-        String charPool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+        String charPool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         
         // Randomly choose a length between 8 and 16
-        int length = random.nextInt(9) + 8; // (0 to 8) + 8 = 8 to 16
+        int length = 16; // (0 to 8) + 8 = 8 to 16
 
         StringBuilder randomSequence = new StringBuilder(length);
 
